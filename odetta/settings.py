@@ -17,6 +17,7 @@ DATABASES = {
         'USER': 'odetta_user',                      # Not used with sqlite3.
         'PASSWORD': 'mrs13ume',                  # Not used with sqlite3.
         'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
+        # 'HOST': 'scidb1.nersc.gov',
         'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
