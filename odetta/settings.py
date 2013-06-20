@@ -1,3 +1,4 @@
+PROJECT_DIR = "/Users/tsun/Documents/Projects/odetta/"
 # Django settings for odetta project.
 
 DEBUG = True
@@ -68,7 +69,7 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     # os.path.join(os.path.dirname(__file__),'media')
-    '/Users/tsun/Documents/Projects/odetta/static',
+    PROJECT_DIR + 'static',
 )
 
 
@@ -106,8 +107,7 @@ ROOT_URLCONF = 'odetta.urls'
 WSGI_APPLICATION = 'odetta.wsgi.application'
 
 TEMPLATE_DIRS = (
-    '/project/projectdirs/odetta/sedona_sg/odetta_v2/odetta/templates',
-    '/Users/tsun/Documents/Projects/odetta/templates/'
+    PROJECT_DIR + "templates/"
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
