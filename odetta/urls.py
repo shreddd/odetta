@@ -4,10 +4,12 @@ from odetta.views import *
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns('',url(r'^$',home_page),
-    url(r'^plot/(\d+)/$',plot_mid),
-    url(r'^plot_few/(\d+)/$',plot_few),
-     url(r'^text/$',text),
+urlpatterns = patterns('',
+    url(r'^$', home_page),
+    url(r'^plot/(\d+)/$', plot_mid),
+    url(r'^plot_few/(\d+)/$', plot_few),
+    url(r'^text/$', text),
+    url(r'^ajax/plot/(?P<id>\d+)/$', plot2),
     # Examples:
     #url(r'^$', 'odetta.views.home', name='home'),
     #url(r'^odetta/', include('odetta.foo.urls')),
@@ -16,5 +18,5 @@ urlpatterns = patterns('',url(r'^$',home_page),
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-     url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 )
