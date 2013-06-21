@@ -40,6 +40,7 @@ class MetaDD2D(models.Model):
         db_table = u'meta_dd2d'
 
 class Models(models.Model):
+    m_type_id = models.SmallIntegerField(primary_key=True)
     modeltype = models.CharField(max_length=40, blank=True)
     modeldim = models.SmallIntegerField(null=True, blank=True)
     date_entered = models.DateField(null=True, blank=True)
