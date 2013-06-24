@@ -1,26 +1,24 @@
-
-
-body {
-    font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', sans-serif;
-    font-size: 14px;
-    letter-spacing: -0.01em;
-    line-height: 150%;
-    text-align: center;
-    /*background-color: #AFC1C4; */
-    background-color: #BFD1D4;
-    color: black;
-    padding: 0;
-    border: 1px solid #aaa;
-
-    margin: 0px 80px 0px 80px;
-    min-width: 740px;
+.navbar{
+    margin-bottom: 0;
 }
-
-#nav {
-	width: 740px;
-	height: 50px;
-	background-color: #FFF;
-
+.navbar .navbar-inner{
+    border-radius: 0;
+    padding:0 40px;
 }
-
-
+.container{
+    width:1200px;
+}
+.navbar .container{
+    width:1200px;
+    margin:0 auto;
+}
+.sidebar-nav{
+    padding:10px 0;
+}
+header{
+    background:url("/static/img/stars-bg.jpg");
+    color:white;
+    padding:30px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid black;
+}

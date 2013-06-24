@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     url(r'^plot_few/(\d+)/$', plot_few),
     url(r'^text/$', text),
     url(r'^ajax/plot/(?P<id>\d+)/$', plot2),
+    url(r'^search/$', search_models),
     # Examples:
     #url(r'^$', 'odetta.views.home', name='home'),
     #url(r'^odetta/', include('odetta.foo.urls')),

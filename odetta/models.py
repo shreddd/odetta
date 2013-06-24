@@ -1,23 +1,30 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#     * Rearrange models' order
-#     * Make sure each model has one field with primary_key=True
-# Feel free to rename the models, but don't rename db_table values or field names.
-#
-# Also note: You'll have to insert the output of 'django-admin.py sqlcustom [appname]'
-# into your database.
-
+from __future__ import unicode_literals
 from django.db import models
+from django import forms
+
+
+class Chi2Test(models.Model):
+    fname = models.CharField(max_length=200, blank=True)
+    chi2dof = models.FloatField(null=True, blank=True)
+    chi2dof_bin = models.FloatField(null=True, blank=True)
+    dof = models.IntegerField(null=True, blank=True)
+    dofb = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'chi2test'
+
 
 class Fluxvals(models.Model):
-    m_id = models.BigIntegerField(primary_key=True)
+    m_id = models.IntegerField(primary_key=True)
     wavelength = models.FloatField()
     luminosity = models.FloatField(null=True, blank=True)
     photon_count = models.FloatField(null=True, blank=True)
-    class Meta:
-        db_table = u'fluxvals'
 
-class MetaDD2D(models.Model):
+    class Meta:
+        db_table = 'fluxvals'
+
+
+class MetaDd2D(models.Model):
     m_id = models.BigIntegerField(primary_key=True)
     modelname = models.CharField(max_length=40, blank=True)
     modeltype = models.CharField(max_length=40, blank=True)
@@ -36,8 +43,10 @@ class MetaDD2D(models.Model):
     rho_min = models.FloatField(null=True, blank=True)
     rho_max = models.FloatField(null=True, blank=True)
     comments = models.CharField(max_length=100, blank=True)
+
     class Meta:
-        db_table = u'meta_dd2d'
+        db_table = 'meta_dd2d'
+
 
 class Models(models.Model):
     modeltype = models.CharField(max_length=40, blank=True)
@@ -45,15 +54,13 @@ class Models(models.Model):
     date_entered = models.DateField(null=True, blank=True)
     citation = models.CharField(max_length=200, blank=True)
     sntype = models.CharField(max_length=10, blank=True)
-    class Meta:
-        db_table = u'models'
+    m_type_id = models.SmallIntegerField(null=True, blank=True, primary_key=True)
 
-class Chi2Test(models.Model):
-    fname = models.CharField(max_length=200, blank=True)
-    chi2dof = models.FloatField(null=True, blank=True)
-    chi2dof_bin = models.FloatField(null=True, blank=True)
-    dof = models.IntegerField(null=True, blank=True)
-    dofb = models.IntegerField(null=True, blank=True)
     class Meta:
-        db_table = u'chi2test'
+        db_table = 'models'
 
+
+class SearchForm(forms.Form):
+    m_id = forms.IntegerField(required=False)
+    percent_oxygen = forms.FloatField(required=False)
+    percent_carbon = forms.FloatField(required=False)

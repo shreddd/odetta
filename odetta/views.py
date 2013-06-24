@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from odetta.models import Fluxvals, MetaDD2D, Models
+from odetta.models import Fluxvals, MetaDd2D, Models, SearchForm
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import pylab as pl
@@ -12,6 +12,14 @@ from odetta_utils import *
 
 def home_page(request):
     return render_to_response('base.html')
+
+
+def search_models(request):
+    if request.method == "POST":
+        search_form = SearchForm(data=request.POST)
+    else:
+        search_form = SearchForm()
+    return render_to_response('search.html', {"form": search_form})
 
 
 def run_all_data(request, x2, y2, y2var):
@@ -65,13 +73,12 @@ def plot_few(request,id):
     ttle = 'Model '+str(id)
     xl = 'Wavelength (A)'
     yl = 'Luminosity'
-    
     fig = Figure()
     ax = fig.add_subplot(111)
     ax.set_title(ttle)
     ax.set_xlabel(xl)
     ax.set_ylabel(yl)
-    ax.plot(wave,lum)
+    ax.plot(wave, lum)
 
     canvas = FigureCanvas(fig)
     response = HttpResponse(content_type='image/png')
@@ -81,7 +88,7 @@ def plot_few(request,id):
 
 def plot2(request, id):
     qset = Fluxvals.objects.filter(m_id=id)
-    meta_data = MetaDD2D.objects.get(m_id=id)
+    meta_data = MetaDd2D.objects.get(m_id=id)
     flux_data = []
     for rec in qset:
         flux_data.append({
