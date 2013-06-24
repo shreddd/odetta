@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block head %}
+	<script type="text/javascript" src="/static/js/d3.js"></script>
+	<script type="text/javascript">
+		var spectrum_data = {{data|safe}};
+		var flux_data = spectrum_data.flux_data;
+		$(document).ready(function(){
+
+		});
+	</script>
+{% endblock head %}
+
+{% block content %}
+	<div class="graph">
+		
+	</div>
+	<table class="details">
+	</table>
+{% endblock content %}
