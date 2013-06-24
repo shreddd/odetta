@@ -61,6 +61,6 @@ class Models(models.Model):
 
 
 class SearchForm(forms.Form):
-    m_id = forms.IntegerField(required=False)
-    percent_oxygen = forms.FloatField(required=False)
-    percent_carbon = forms.FloatField(required=False)
+    m_id = forms.IntegerField(required=False, label=u'Model ID')
+    percent_oxygen = forms.FloatField(required=False, label=u'Percent Carbon')
+    percent_carbon = forms.FloatField(required=False, label=u'Percent Oxygen')

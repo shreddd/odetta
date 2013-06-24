@@ -3,10 +3,14 @@ from odetta.models import Fluxvals, MetaDd2D, Models, SearchForm
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import pylab as pl
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 import simplejson
 from django.forms.models import model_to_dict
 from odetta_utils import *
+from django.template import RequestContext
+from django.core.urlresolvers import reverse
+from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 #from simple_chi2 import *
 
 
@@ -15,11 +19,60 @@ def home_page(request):
 
 
 def search_models(request):
-    if request.method == "POST":
-        search_form = SearchForm(data=request.POST)
-    else:
-        search_form = SearchForm()
-    return render_to_response('search.html', {"form": search_form})
+    search_form = SearchForm()
+    results = []
+    MAX_ENTRIES = 10
+    if request.method == "GET" and len(request.GET):
+        search_form = SearchForm(data=request.GET)
+        if search_form.is_valid():
+
+            # Shows the detailed page if m_id is inputed
+            if search_form.cleaned_data['m_id']:
+                return redirect(plot_mid, search_form.cleaned_data["m_id"])
+
+            # Searches for metadata matching the criteria
+            search_query = Q()
+            if search_form.cleaned_data["percent_oxygen"]:
+                search_query = search_query | Q(percent_oxygen=search_form.cleaned_data["percent_oxygen"])
+            if search_form.cleaned_data["percent_carbon"]:
+                search_query = search_query | Q(percent_carbon=search_form.cleaned_data["percent_carbon"])
+
+            # Deals with paging of search results
+            page = request.GET.get("page", 1)
+            result_list = MetaDd2D.objects.filter(search_query).order_by("m_id")
+            pages = Paginator(result_list, MAX_ENTRIES)
+            try:
+                results = pages.page(page)
+            except PageNotAnInteger:
+                results = pages.page(1)
+            except EmptyPage:
+                results = pages.page(pages.num_pages)
+
+            # Creates a range of pages (like on the bottom of google search)
+            page_range = []
+            start = results.number
+            if results.number <= MAX_ENTRIES/2:
+                page_range = pages.page_range[:MAX_ENTRIES]
+            elif results.number >= pages.page_range[-1]-MAX_ENTRIES/2:
+                page_range = pages.page_range[-MAX_ENTRIES:]
+            else:
+                page_range = range(results.number-4, results.number+5)
+            # for x in range(1, 6):
+            #     if start - 1 <= 0:
+            #         break
+            #     start -= 1
+            # for x in range(start, start+10):
+            #     if x > 0:
+            #         page_range.append(x)
+
+            # Creates a querystring without the page number
+            temp = request.GET.copy()
+            if temp.get("page"):
+                temp.pop("page")
+            query_string = temp.urlencode()
+
+            return render_to_response('search.html', {"form": search_form, "results": results, "page_range": page_range, "q_string": query_string}, context_instance=RequestContext(request))
+    return render_to_response('search.html', {"form": search_form}, context_instance=RequestContext(request))
 
 
 def run_all_data(request, x2, y2, y2var):
