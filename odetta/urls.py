@@ -7,9 +7,9 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', home_page),
     url(r'^plot/(\d+)/$', plot_mid),
+    url(r'^spectrum/(?P<id>\d+)/$', plot),
     url(r'^plot_few/(\d+)/$', plot_few),
     url(r'^text/$', text),
-    url(r'^ajax/plot/(?P<id>\d+)/$', plot2),
     url(r'^search/$', search_models),
     # Examples:
     #url(r'^$', 'odetta.views.home', name='home'),

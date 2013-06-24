@@ -15,7 +15,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 def home_page(request):
-    return render_to_response('base.html')
+    return render_to_response('base.html', context_instance=RequestContext(request))
 
 
 def search_models(request):
@@ -50,20 +50,12 @@ def search_models(request):
 
             # Creates a range of pages (like on the bottom of google search)
             page_range = []
-            start = results.number
             if results.number <= MAX_ENTRIES/2:
                 page_range = pages.page_range[:MAX_ENTRIES]
             elif results.number >= pages.page_range[-1]-MAX_ENTRIES/2:
                 page_range = pages.page_range[-MAX_ENTRIES:]
             else:
                 page_range = range(results.number-4, results.number+5)
-            # for x in range(1, 6):
-            #     if start - 1 <= 0:
-            #         break
-            #     start -= 1
-            # for x in range(start, start+10):
-            #     if x > 0:
-            #         page_range.append(x)
 
             # Creates a querystring without the page number
             temp = request.GET.copy()
@@ -73,6 +65,22 @@ def search_models(request):
 
             return render_to_response('search.html', {"form": search_form, "results": results, "page_range": page_range, "q_string": query_string}, context_instance=RequestContext(request))
     return render_to_response('search.html', {"form": search_form}, context_instance=RequestContext(request))
+
+
+def plot(request, id):
+    qset = Fluxvals.objects.filter(m_id=id)
+    meta_data = MetaDd2D.objects.get(m_id=id)
+    flux_data = []
+    for rec in qset:
+        flux_data.append({
+            "wavelength": rec.wavelength,
+            "lum": rec.luminosity,
+        })
+    data = {
+        "meta": model_to_dict(meta_data),
+        "flux_data": flux_data
+    }
+    return render_to_response("spectrum_detail.html", {"data": simplejson.dumps(data)}, context_instance=RequestContext(request))
 
 
 def run_all_data(request, x2, y2, y2var):
@@ -138,21 +146,6 @@ def plot_few(request,id):
     canvas.print_png(response)
     return response
 
-
-def plot2(request, id):
-    qset = Fluxvals.objects.filter(m_id=id)
-    meta_data = MetaDd2D.objects.get(m_id=id)
-    flux_data = []
-    for rec in qset:
-        flux_data.append({
-            "wavelength": rec.wavelength,
-            "lum": rec.luminosity,
-        })
-    data = {
-        "meta": model_to_dict(meta_data),
-        "flux_data": flux_data
-    }
-    return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 
 def text(request):
