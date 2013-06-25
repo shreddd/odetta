@@ -67,13 +67,6 @@
 	        	.attr("class",chartBody)
 	        	.attr("transform","translate("+ translatedX + ","+ translatedY +")");
 
-	        var lineGraph = chartBody.append("path")
-	            .attr("d",lineFunction(flux_data))
-	            .attr("stroke","teal")
-	            .attr("stroke-width",2)
-	            .attr("fill","none")
-	            .attr("class","chartBody");
-
 	        // chartBody.selectAll("circle")
 	        // 	.data(flux_data)
 	        // 	.enter()
@@ -116,6 +109,15 @@
                 .attr("dy","0.75em")
                 .attr("transform","rotate(-90)")
                 .text("Luminosity");
+
+            function drawGraph(dataset){
+                var lineGraph = chartBody.append("path")
+                .attr("d",lineFunction(dataset))
+                .attr("stroke","teal")
+                .attr("stroke-width",2)
+                .attr("fill","none")
+                .attr("class","chartBody");
+            }
 
 	        function resetListeners(){
             d3.selectAll("circle").on("mouseover",null);
@@ -197,8 +199,8 @@
                         .duration(250)
                         .remove();
                 });
-         }
-	        
+            }
+	       drawGraph(flux_data);
 	     });
 	</script>
 {% endblock head %}
