@@ -29,11 +29,15 @@
             stroke: steelblue;
             stroke-width: 1.5px;
         }
+        .zoom{
+            fill:none;
+            stroke:black;
+        }
     </style>
 {% endblock head %}
 
 {% block content %}
-    <div class="graph">
+    <div class="graph" oncontextmenu="return false">
 
     </div>
     <script type="text/javascript">
@@ -72,15 +76,59 @@
         var zoom = d3.behavior.zoom()
             .x(x)
             .y(y)
-            .on("zoom", zoomHandler);
-
+            .on("zoom", function(){
+                if(d3.event.sourceEvent.which!=3){
+                    refresh();
+                }
+            });
+        var zoomRect = true;
         svg = d3.select('.graph')
             .append("svg:svg")
             .attr('width', width + margin.left + margin.right)
             .attr('height', height + margin.top + margin.bottom)
             .append("svg:g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .call(zoom);
+            .call(zoom)
+            .append("g")
+            .on("mousedown", function() {
+                if (d3.event.which != 3) return;
+                var e = this,
+                    origin = d3.mouse(e),
+                    rect = svg.append("rect").attr("class", "zoom");
+                d3.select("body").classed("noselect", true);
+                origin[0] = Math.max(0, Math.min(width, origin[0]));
+                origin[1] = Math.max(0, Math.min(height, origin[1]));
+                d3.select(window)
+                    .on("mousemove.zoomRect", function() {
+                        var m = d3.mouse(e);
+                        m[0] = Math.max(0, Math.min(width, m[0]));
+                        m[1] = Math.max(0, Math.min(height, m[1]));
+                        rect.attr("x", Math.min(origin[0], m[0]))
+                            .attr("y", Math.min(origin[1], m[1]))
+                            .attr("width", Math.abs(m[0] - origin[0]))
+                    .attr("height", Math.abs(m[1] - origin[1]));
+                })
+                .on("mouseup.zoomRect", function() {
+                    d3.select(window).on("mousemove.zoomRect", null).on("mouseup.zoomRect", null);
+                    d3.select("body").classed("noselect", false);
+                    var m = d3.mouse(e);
+                    m[0] = Math.max(0, Math.min(width, m[0]));
+                    m[1] = Math.max(0, Math.min(height, m[1]));
+                    if (m[0] !== origin[0] && m[1] !== origin[1]) {
+                        console.log("Start x: "+origin[0]);
+                        console.log("Start y: "+origin[1]);
+                        console.log("End x: "+m[0]);
+                        console.log("End y: "+m[1]);
+                        zoom.x(x.domain([origin[0], m[0]].map(x.invert).sort(function(a,b){return a > b;})))
+                            .y(y.domain([origin[1], m[1]].map(y.invert).sort(function(a,b){return a > b;})));
+                        console.log("x domain: " + [origin[0], m[0]].map(x.invert).sort(function(a,b){return a > b;}));
+                        console.log("y domain: " + [origin[1], m[1]].map(y.invert).sort(function(a,b){return a > b;}));
+                    }
+                    rect.remove();
+                    refresh();
+                }, true);
+            d3.event.stopPropagation();
+        });
 
         svg.append("svg:rect")
             .attr("width", width)
@@ -148,7 +196,7 @@
             .attr("class", "line")
             .attr("d", line);
 
-        function zoomHandler() {
+        function refresh() {
             // console.log(d3.event.translate);
             // console.log(d3.event.scale);
             svg.select(".x.axis").call(xAxis);
