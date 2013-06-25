@@ -72,8 +72,8 @@
         <div class="row-fluid">
             <div class="span2">
                 <div class="well sidebar-nav">
-                    {% block nav %}
                     <ul class="nav nav-list">
+                    {% block nav %}
                         <li class="nav-header">Sidebar</li>
                         <li><a href="{% url 'odetta.views.plot_mid' '1'%}">Link 1</a></li>
                         <li><a href="#">Link 2</a></li>
@@ -83,8 +83,8 @@
                         <li><a href="#">Link 6</a></li>
                         <li><a href="#">Link 7</a></li>
                         <li><a href="#">Link 8</a></li>
-                    </ul> 
                     {% endblock %}
+                    </ul> 
                 </div>
             </div>
             <div class="span10">

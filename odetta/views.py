@@ -127,7 +127,8 @@ def plot_mid(request, id):
 
     canvas = FigureCanvas(fig)
     response = HttpResponse(content_type='image/png')
-    # response['Content-Disposition'] = 'attachment; filename="graph.png"'
+    if int(request.GET.get("download", 0)) == 1:
+        response['Content-Disposition'] = 'attachment; filename="graph.png"'
     canvas.print_png(response)
     return response
 
