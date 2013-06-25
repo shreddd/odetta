@@ -19,6 +19,9 @@
 		var flux_data = spectrum_data.flux_data;
 		var width = 1000;
 		var height = 500;
+        var chartBody;
+        var svg;
+
 
 		var xScale = d3.scale.linear()
 			.domain([0,d3.max(flux_data,function(d){
@@ -31,6 +34,11 @@
 				return d.lum;
 			})])
 			.range([height,50]);
+
+        var zoom = d3.behavior.zoom()
+            .x(xScale)
+            .y(yScale)
+            .on("zoom", zoomHandler);
 
 		var xAxis = d3.svg.axis()
 			.orient("bottom")
@@ -54,14 +62,15 @@
 
 		$(document).ready(function(){
 
-			var svg = d3.select(".graph")
+			svg = d3.select(".graph")
 				.append("svg")
 				.attr("width",width)
 				.attr("height",height);
 
-	        var chartBody = svg.append("g")
+	        chartBody = svg.append("g")
 	        	.attr("class",chartBody)
-	        	.attr("transform","translate(50,-25)");
+	        	.attr("transform","translate(50,-25)")
+                .call(zoom);
 
 	        var lineGraph = chartBody.append("path")
 	            .attr("d",lineFunction(flux_data))
@@ -180,6 +189,13 @@
          }
 	        
 	     });
+    function zoomHandler() {
+        // console.log(d3.event.translate);
+        // console.log(d3.event.scale);
+        chartBody.attr("transform", "scale("+d3.event.scale+") translate("+d3.event.translate[0]+",0)");
+        // drawScatter();
+        // drawLineGraph();
+    }
 	</script>
 {% endblock head %}
 
