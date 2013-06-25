@@ -44,7 +44,7 @@
 	<div class="span12 results">
 		{% for result in results %}
 			<div class="result">
-				<a href="{% url 'odetta.views.plot_mid' result.m_id %}">Entry {{result.m_id}}</a>
+				<a href="{% url 'odetta.views.plot' result.m_id %}">Entry {{result.m_id}}</a>
 				<small><a href="/plot/{{result.m_id}}/img/">img</a></small>
 				<div class="details">
 					Mu: {{result.mu}}, Rho Max: {{result.rho_max}}, Ka Min: {{result.ka_min}}

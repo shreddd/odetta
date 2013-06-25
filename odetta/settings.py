@@ -1,4 +1,4 @@
-PROJECT_DIR = "/Users/tonywang/Documents/odetta/"
+PROJECT_DIR = "/Users/tsun/Documents/Projects/odetta/"
 # Django settings for odetta project.
 
 DEBUG = True
