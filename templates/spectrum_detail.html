@@ -200,6 +200,10 @@
         var chartBody = svg.append("g")
             .attr("clip-path", "url(#clip)");
 
+
+        chartBody.append("g")
+            .attr("id","circles")
+
         chartBody.append("svg:path")
             .datum(flux_data)
             .attr("class", "line")
@@ -221,6 +225,12 @@
             svg.select(".line")
                 .attr("class", "line")
                 .attr("d", line);
+            if(zoom.scale() > 10){
+                showCircles();
+            } else{
+                d3.select("#circles").selectAll("circle")
+                    .remove();
+            }
         }
 
         function restore(){
@@ -233,6 +243,24 @@
                 }))
                 .range([height, 0]));
             refresh();
+        }
+
+        function showCircles(){
+            d3.select("#circles").selectAll("circle").remove();
+            d3.select("#circles").selectAll("circle")
+            .data(flux_data)
+            .enter()
+            .append("circle")
+            .attr("r",3)
+            .attr("stroke","black")
+            .attr("stroke-width","1px")
+            .attr("fill","teal")
+            .attr("cx",function(d){
+                return x(d.wavelength);
+            })
+            .attr("cy",function(d){
+                return y(d.lum);
+            });
         }
     </script>
     <div id = "options">
