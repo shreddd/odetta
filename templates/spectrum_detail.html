@@ -84,6 +84,7 @@
         var zoom = d3.behavior.zoom()
             .x(x)
             .y(y)
+            // .scaleExtent([1,Infinity],[1,Infinity])
             .on("zoom", function(){
                 if(d3.event.sourceEvent.which!=3){
                     refresh();
@@ -215,7 +216,26 @@
                 .attr("class", "line")
                 .attr("d", line);
         }
+
+        function restore(){
+            x = d3.scale.linear()
+                .domain(d3.extent(flux_data, function (d) {
+                    return d.wavelength;
+                }))
+                .range([0, width]);
+            y = d3.scale.linear()
+                .domain(d3.extent(flux_data, function (d) {
+                    return d.lum;
+                }))
+                .range([height, 0]);
+            zoom.x(x).y(y);
+            zoom.scale(1);
+            refresh();
+        }
     </script>
+    <div id = "options">
+        <button id = "restore" class="btn" onclick = "restore()">Restore to Default</button>
+    </div>
     <div id="details">
         <h2>Spectrum Details</h2>
         <table class="table table-striped">
