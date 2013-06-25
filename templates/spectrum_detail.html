@@ -1,79 +1,78 @@
 {% extends "base.html" %}
 
 {% block head %}
-	<script type="text/javascript" src="/static/js/d3.js"></script>
-	<style type="text/css">
-		body {
-    font: 10px sans-serif;
-}
-.plot {
-    fill: rgba(250, 250, 255, 0.6);
-}
-.grid .tick {
-    stroke: lightgrey;
-    opacity: 0.7;
-}
-.grid path {
-    stroke-width: 0;
-}
-.axis path, .axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
-}
-.x.axis path {
-    display: none;
-}
-.line {
-    fill: none;
-    stroke: steelblue;
-    stroke-width: 1.5px;
-}
-	</style>
+    <script type="text/javascript" src="/static/js/d3.js"></script>
+    <style type="text/css">
+        body {
+            font: 10px sans-serif;
+        }
+        .plot {
+            fill: rgba(250, 250, 255, 0.6);
+        }
+        .grid .tick {
+            stroke: lightgrey;
+            opacity: 0.7;
+        }
+        .grid path {
+            stroke-width: 0;
+        }
+        .axis path, .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+        .x.axis path {
+            display: none;
+        }
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+    </style>
 {% endblock head %}
 
 {% block content %}
+    <div class="graph">
 
-	<div class="graph">
-		
-	</div>
+    </div>
     <script type="text/javascript">
         var spectrum_data = {{data|safe}};
         var flux_data = spectrum_data.flux_data;
         margin = {
             top: 20,
-            right: 20,
+            right: 50,
             bottom: 20,
-            left: 45
+            left: 50
         };
 
-        width = 400 - margin.left - margin.right;
-        height = 200 - margin.top - margin.bottom;
+        width = 1000 - margin.left - margin.right;
+        height = 500 - margin.top - margin.bottom;
 
         var x = d3.scale.linear()
             .domain(d3.extent(flux_data, function (d) {
-            return d.wavelength;
-        }))
+                return d.wavelength;
+            }))
             .range([0, width]);
 
         var y = d3.scale.linear()
             .domain(d3.extent(flux_data, function (d) {
-            return d.lum;
-        }))
+                return d.lum;
+            }))
             .range([height, 0]);
 
         var line = d3.svg.line()
             .x(function (d) {
-            return x(d.wavelength);
-        })
+                return x(d.wavelength);
+            })
             .y(function (d) {
-            return y(d.lum);
-        });
+                return y(d.lum);
+            });
 
         var zoom = d3.behavior.zoom()
             .x(x)
             .y(y)
-            .on("zoom", zoomed);
+            .on("zoom", zoomHandler);
 
         svg = d3.select('.graph')
             .append("svg:svg")
@@ -90,22 +89,19 @@
 
         var make_x_axis = function () {
             return d3.svg.axis()
-                .scale(x)
-                .orient("bottom")
-                .ticks(5);
+            .scale(x)
+            .orient("bottom");
         };
 
         var make_y_axis = function () {
             return d3.svg.axis()
-                .scale(y)
-                .orient("left")
-                .ticks(5);
+            .scale(y)
+            .orient("left");
         };
 
         var xAxis = d3.svg.axis()
             .scale(x)
-            .orient("bottom")
-            .ticks(5);
+            .orient("bottom");
 
         svg.append("svg:g")
             .attr("class", "x axis")
@@ -115,7 +111,9 @@
         var yAxis = d3.svg.axis()
             .scale(y)
             .orient("left")
-            .ticks(5);
+            .tickFormat(function(d){
+                return d.toExponential(1);
+            });
 
         svg.append("g")
             .attr("class", "y axis")
@@ -125,14 +123,14 @@
             .attr("class", "x grid")
             .attr("transform", "translate(0," + height + ")")
             .call(make_x_axis()
-            .tickSize(-height, 0, 0)
-            .tickFormat(""));
+                .tickSize(-height, 0, 0)
+                .tickFormat(""));
 
         svg.append("g")
             .attr("class", "y grid")
             .call(make_y_axis()
-            .tickSize(-width, 0, 0)
-            .tickFormat(""));
+                .tickSize(-width, 0, 0)
+                .tickFormat(""));
 
         var clip = svg.append("svg:clipPath")
             .attr("id", "clip")
@@ -150,29 +148,29 @@
             .attr("class", "line")
             .attr("d", line);
 
-        function zoomed() {
-            console.log(d3.event.translate);
-            console.log(d3.event.scale);
+        function zoomHandler() {
+            // console.log(d3.event.translate);
+            // console.log(d3.event.scale);
             svg.select(".x.axis").call(xAxis);
             svg.select(".y.axis").call(yAxis);
             svg.select(".x.grid")
                 .call(make_x_axis()
-                .tickSize(-height, 0, 0)
-                .tickFormat(""));
+                    .tickSize(-height, 0, 0)
+                    .tickFormat(""));
             svg.select(".y.grid")
                 .call(make_y_axis()
-                .tickSize(-width, 0, 0)
-                .tickFormat(""));
+                    .tickSize(-width, 0, 0)
+                    .tickFormat(""));
             svg.select(".line")
                 .attr("class", "line")
                 .attr("d", line);
         }
     </script>
-	<table class="details">
+    <table class="details">
         {% for detail in details.fields %}
-            <tr>
-                <td>{{detail}}</td>
-            </tr>
+        <tr>
+            <td>{{detail}}</td>
+        </tr>
         {% endfor %}
-	</table>
+    </table>
 {% endblock content %}
