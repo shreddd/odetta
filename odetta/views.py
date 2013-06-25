@@ -84,7 +84,7 @@ def plot(request, id):
     for field in meta_data._meta.get_all_field_names():
         details.append((meta_data._meta.get_field(field).verbose_name, getattr(meta_data, field.__str__())))
     # raise Exception(details)
-    return render_to_response("spectrum_detail.html", {"data": simplejson.dumps(data), "details": details}, context_instance=RequestContext(request))
+    return render_to_response("spectrum_detail.html", {"data": simplejson.dumps(data), "details": details, "meta_data": meta_data}, context_instance=RequestContext(request))
 
 
 def run_all_data(request, x2, y2, y2var):
