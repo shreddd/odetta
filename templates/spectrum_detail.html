@@ -24,13 +24,13 @@
 			.domain([0,d3.max(flux_data,function(d){
 				return d.wavelength;
 			})])
-			.range([0,width]);
+			.range([0,width-100]);
 
 		var yScale = d3.scale.linear()
 			.domain([0,d3.max(flux_data,function(d){
 				return d.lum;
 			})])
-			.range([height,0]);
+			.range([height,50]);
 
 		var xAxis = d3.svg.axis()
 			.orient("bottom")
@@ -38,7 +38,10 @@
 
 		var yAxis = d3.svg.axis()
 			.orient("left")
-			.scale(yScale);
+			.scale(yScale)
+            .tickFormat(function(d){
+                return d.toExponential(1)
+            });
 
 		var lineFunction = d3.svg.line()
 			.x(function(d){
@@ -185,5 +188,10 @@
 		
 	</div>
 	<table class="details">
+        {% for detail in details.fields %}
+            <tr>
+                <td>{{detail}}</td>
+            </tr>
+        {% endfor %}
 	</table>
 {% endblock content %}
