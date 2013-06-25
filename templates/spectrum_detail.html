@@ -19,18 +19,22 @@
 		var flux_data = spectrum_data.flux_data;
 		var width = 1000;
 		var height = 500;
+        var innerWidth = width - 100;
+        var innerHeight = 75;
+        var translatedX = 75
+        var translatedY = -50;
 
 		var xScale = d3.scale.linear()
 			.domain([0,d3.max(flux_data,function(d){
 				return d.wavelength;
 			})])
-			.range([0,width-100]);
+			.range([0,innerWidth]);
 
 		var yScale = d3.scale.linear()
 			.domain([0,d3.max(flux_data,function(d){
 				return d.lum;
 			})])
-			.range([height,50]);
+			.range([height,innerHeight]);
 
 		var xAxis = d3.svg.axis()
 			.orient("bottom")
@@ -61,7 +65,7 @@
 
 	        var chartBody = svg.append("g")
 	        	.attr("class",chartBody)
-	        	.attr("transform","translate(50,-25)");
+	        	.attr("transform","translate("+ translatedX + ","+ translatedY +")");
 
 	        var lineGraph = chartBody.append("path")
 	            .attr("d",lineFunction(flux_data))
@@ -89,13 +93,29 @@
 
   			svg.append("g")
 	            .attr("class","axis")
-	            .attr("transform","translate(50," + (height-25) + ")")
+	            .attr("transform","translate(" + translatedX + "," + (height + translatedY) + ")")
 	            .call(xAxis);
 
 	        svg.append("g")
 	            .attr("class","axis")
-	            .attr("transform","translate(50,-25)")
+	            .attr("transform","translate("+ translatedX + "," + translatedY + ")")
 	            .call(yAxis);
+
+            svg.append("text")
+                .attr("class","labels")
+                .attr("text-anchor","end")
+                .attr("x",innerWidth/2 + translatedX)
+                .attr("y",height - 5)
+                .text("Wavelength");
+
+            svg.append("text")
+                .attr("class","labels")
+                .attr("text-anchor","end")
+                .attr("y",0)
+                .attr("x",-(height / 2) - translatedY)
+                .attr("dy","0.75em")
+                .attr("transform","rotate(-90)")
+                .text("Luminosity");
 
 	        function resetListeners(){
             d3.selectAll("circle").on("mouseover",null);
