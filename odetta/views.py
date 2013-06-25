@@ -28,7 +28,7 @@ def search_models(request):
 
             # Shows the detailed page if m_id is inputed
             if search_form.cleaned_data['m_id']:
-                return redirect(plot_mid, search_form.cleaned_data["m_id"])
+                return redirect(plot, search_form.cleaned_data["m_id"])
 
             # Searches for metadata matching the criteria
             search_query = Q()
@@ -123,6 +123,7 @@ def plot_mid(request, id):
 
     canvas = FigureCanvas(fig)
     response = HttpResponse(content_type='image/png')
+    # response['Content-Disposition'] = 'attachment; filename="graph.png"'
     canvas.print_png(response)
     return response
 
