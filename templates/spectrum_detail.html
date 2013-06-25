@@ -105,7 +105,11 @@
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             .call(zoom)
             .append("g")
+            .on("mouseup", function(){
+                d3.select('body').style("cursor", null);
+            })
             .on("mousedown", function() {
+                d3.select('body').style("cursor", "move");
                 if (d3.event.which != 3) return;
                 var e = this,
                     origin = d3.mouse(e),
@@ -246,16 +250,23 @@
         }
 
         function showCircles(){
-            d3.select("#circles").selectAll("circle").remove();
-            d3.select("#circles").selectAll("circle")
-            .data(flux_data)
-            .enter()
-            .append("circle")
-            .attr("r",3)
-            .attr("stroke","black")
-            .attr("stroke-width","1px")
-            .attr("fill","teal")
-            .attr("cx",function(d){
+            var circles = d3.select("#circles").selectAll("circle")
+                .data(flux_data);
+            
+            circles.enter()
+                .append("circle")
+                .attr("r",3)
+                .attr("stroke","black")
+                .attr("stroke-width","1px")
+                .attr("fill","teal")
+                .attr("cx",function(d){
+                    return x(d.wavelength);
+                })
+                .attr("cy",function(d){
+                    return y(d.lum);
+                });
+
+            circles.attr("cx",function(d){
                 return x(d.wavelength);
             })
             .attr("cy",function(d){
