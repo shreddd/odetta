@@ -1,0 +1,24 @@
+.navbar{
+    margin-bottom: 0;
+}
+.navbar .navbar-inner{
+    border-radius: 0;
+    padding:0 40px;
+}
+.container{
+    width:1200px;
+}
+.navbar .container{
+    width:1200px;
+    margin:0 auto;
+}
+.sidebar-nav{
+    padding:10px 0;
+}
+header{
+    background:url("/static/img/stars-bg.jpg");
+    color:white;
+    padding:30px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid black;
+}

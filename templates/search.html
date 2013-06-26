@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block head %}
+	<style type="text/css">
+		form{
+			width:450px;
+			padding:1em;
+		}
+		.result a{
+			font-size: 1.2em;
+		}
+		.result .details{
+			padding-left:1em;
+		}
+		.result small{
+			font-size: 0.8em;
+			font-variant: small-caps;
+		}
+	</style>
+{% endblock head %}
+
+{% block content %}
+	<h1>Spectra Search</h1>
+	<form action="/search/" method="get" class="form-horizontal">
+			{% for field in form %}
+			<div class="control-group">
+				<label class="control-label" for="id_{{field.html_name}}">{{field.label}}</label>
+				<div class="controls">
+					{{field}}
+				</div>
+			</div>
+				{% if forloop.first %}
+					<hr/>
+				{% endif %}
+			{% endfor %}
+			<div class="control-group">
+				<div class="controls">
+					<input class="btn" type="submit" value="Search" />					
+				</div>
+			</div>
+	</form>
+
+	{% if results %}
+	<div class="span12 results">
+		{% for result in results %}
+			<div class="result">
+				<a href="{% url 'odetta.views.plot' result.m_id %}">Entry {{result.m_id}}</a>
+				<small><a href="/plot/{{result.m_id}}/img/">img</a></small>
+				<div class="details">
+					Mu: {{result.mu}}, Rho Max: {{result.rho_max}}, Ka Min: {{result.ka_min}}
+				</div>
+			</div>
+		{% endfor %}
+		<div class="pagination pagination-centered">
+			<ul>
+				<li><a href="?{{q_string}}&page=1">First</a></li>
+				{% if results.has_previous %}
+				<li>
+		            <a href="?{{q_string}}&page={{results.previous_page_number}}">Prev</a>
+				</li>
+		       	{% else %}
+		       	<li class="disabled">
+		       		<a href="#">Prev</a>
+		       	</li>
+		        {% endif %}
+
+		        {% for page in page_range %}
+		        	{% if page == results.number %}
+		        		<li class="active">
+		        			<a href="?{{q_string}}&page={{page}}">{{page}}</a>
+		        		</li>
+		        	{% else %}
+		        		<li>
+		        			<a href="?{{q_string}}&page={{page}}">{{page}}</a>
+		        		</li>
+		        	{% endif %}
+		        {% endfor %}
+
+				{% if results.has_next %}
+				<li>
+		            <a href="?{{q_string}}&page={{ results.next_page_number }}">Next</a>
+		         </li>
+		       	{% else %}
+		       	<li class="disabled">
+		       		<a href="#" class="disabled">Next</a>
+				</li>		
+		        {% endif %}
+		        <li><a href="?{{q_string}}&page=99999">Last</a></li>
+			</ul>	
+		</div>
+	</div>
+	{% endif %}
+{% endblock content %}
