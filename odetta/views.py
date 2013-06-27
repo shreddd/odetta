@@ -87,6 +87,30 @@ def plot(request, id):
     return render_to_response("spectrum_detail.html", {"data": simplejson.dumps(data), "details": details, "meta_data": meta_data}, context_instance=RequestContext(request))
 
 
+def ajax_plot(request, id):
+    qset = Fluxvals.objects.filter(m_id=id)
+    meta_data = MetaDD2D.objects.get(m_id=id)
+    flux_data = []
+    for rec in qset:
+        flux_data.append({
+            "wavelength": rec.wavelength,
+            "lum": rec.luminosity,
+        })
+    data = {
+        "meta": model_to_dict(meta_data),
+        "flux_data": flux_data
+    }
+    return HttpResponse(simplejson.dumps(data), content_type="application/json")
+
+
+def fitter(request):
+    return render_to_response("fitter_form.html", context_instance=RequestContext(request))
+
+
+def about(request):
+    return render_to_response("about.html", context_instance=RequestContext(request))
+
+
 def run_all_data(request, x2, y2, y2var):
     #get id's
     qset = Fluxvals.objects.distinct('m_id')
