@@ -56,8 +56,6 @@
 
     </div>
     <script type="text/javascript">
-        var spectrum_data = {{data|safe}};
-        var flux_data = spectrum_data.flux_data;
         margin = {
             top: 20,
             right: 50,
@@ -69,16 +67,11 @@
         height = 500 - margin.top - margin.bottom;
 
         var x = d3.scale.linear()
-            .domain(d3.extent(flux_data, function (d) {
-                return d.wavelength;
-            }))
-            .range([0, width]);
-
+            .domain([0,1000])
+            .range([0, width]); //X-Scale
         var y = d3.scale.linear()
-            .domain(d3.extent(flux_data, function (d) {
-                return d.lum;
-            }))
-            .range([height, 0]);
+            .domain([0,1000])
+            .range([height, 0]); //y-Scale
 
         var line = d3.svg.line()
             .x(function (d) {
@@ -205,13 +198,19 @@
             .attr("clip-path", "url(#clip)");
 
 
-        chartBody.append("g")
+        var circlesLayer = chartBody.append("g")
             .attr("id","circles")
-
-        chartBody.append("svg:path")
-            .datum(flux_data)
-            .attr("class", "line")
-            .attr("d", line);
+        
+        function graphData(data){
+            if(clearData){
+                chartBody.selectAll(".line").remove();            
+            }
+            chartBody.append("svg:path")
+                .datum(data)
+                .attr("class", "line")
+                .attr("d", line);   
+            refresh();         
+        }
 
         function refresh() {
             // console.log(d3.event.translate);
@@ -226,23 +225,24 @@
                 .call(make_y_axis()
                     .tickSize(-width, 0, 0)
                     .tickFormat(""));
-            svg.select(".line")
+            svg.selectAll(".line")
                 .attr("class", "line")
                 .attr("d", line);
-            if(zoom.scale() > 10){
-                showCircles();
-            } else{
-                d3.select("#circles").selectAll("circle")
-                    .remove();
-            }
+
+            // if(zoom.scale() > 10){
+            //     showCircles();
+            // } else{
+            //     circlesLayer.selectAll("circle")
+            //         .remove();
+            // }
         }
 
-        function restore(){
-            zoom.x(x.domain(d3.extent(flux_data, function (d) {
+        function restoreScale(){
+            zoom.x(x.domain(d3.extent(frameData[currFrame], function (d) {
                     return d.wavelength;
                 }))
                 .range([0, width]))
-                .y(y.domain(d3.extent(flux_data, function (d) {
+                .y(y.domain(d3.extent(frameData[currFrame], function (d) {
                     return d.lum;
                 }))
                 .range([height, 0]));
@@ -250,7 +250,7 @@
         }
 
         function showCircles(){
-            var circles = d3.select("#circles").selectAll("circle")
+            var circles = circlesLayer.selectAll("circle")
                 .data(flux_data);
             
             circles.enter()
@@ -273,9 +273,65 @@
                 return y(d.lum);
             });
         }
+
+        var currFrame = 0;
+        var frameData = [];
+        var clearData = true;
+        var animation;
+        var rescale = false;
+
+        function runAnimation(start, end, speed){
+            if(animation){
+                animation = clearInterval(animation);
+            }
+            currFrame = start;
+            animation = setInterval(getNextFrame, speed)
+        }
+
+        function getNextFrame(){
+            getData(++currFrame);
+        }
+
+        function preloadData(start,end){
+            for(var x=start; x<end; x++){
+                d3.json("/ajax/plot/{{meta_data.m_id}}/"+x+"/", function(error, data){
+                    if (error){
+                        console.log(error);
+                    }else{
+                        frameData[data.frame] = data.flux_data;
+                    }
+                });
+            }
+        }
+
+        function getData(frame){            
+            if(frameData[frame]){
+                graphData(frameData[frame]);
+                currFrame = frame;
+                if(rescale){
+                    restoreScale();
+                }              
+            }else{
+                d3.json("/ajax/plot/{{meta_data.m_id}}/"+frame+"/", function(error, data){
+                    if (error){
+                        alert(error);
+                        if(animation){
+                            animation = clearInterval(animation);
+                        }
+                    }else{
+                        frameData[data.frame] = data.flux_data;
+                        graphData(data.flux_data);
+                        currFrame = frame;
+                        if(rescale){
+                            restoreScale();
+                        }  
+                    }
+                });
+            }
+        }
     </script>
     <div id = "options">
-        <button id = "restore" class="btn" onclick = "restore()">Restore to Default</button>
+        <button id = "restore" class="btn" onclick = "restoreScale()">Restore to Default</button>
     </div>
     <div id="details">
         <h2>Spectrum Details</h2>

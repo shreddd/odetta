@@ -87,20 +87,23 @@ def plot(request, id):
     return render_to_response("spectrum_detail.html", {"data": simplejson.dumps(data), "details": details, "meta_data": meta_data}, context_instance=RequestContext(request))
 
 
-def ajax_plot(request, id):
+def get_all_data(request, id, frame):
     qset = Fluxvals.objects.filter(m_id=id)
-    meta_data = MetaDD2D.objects.get(m_id=id)
-    flux_data = []
-    for rec in qset:
-        flux_data.append({
+    meta_data = MetaDd2D.objects.get(m_id=id)
+    timestep = MetaDd2D.objects.filter(mu__contains=meta_data.mu).order_by("m_id")
+    try:
+        timestep = timestep[int(frame)]
+    except IndexError:
+        return HttpResponse(simplejson.dumps({"success": False, "error": "frame out of bounds", "max_frames": timestep.count()-1}))
+    data = []
+    flux_data = Fluxvals.objects.filter(m_id=timestep.m_id)
+    for rec in flux_data:
+        data.append({
             "wavelength": rec.wavelength,
             "lum": rec.luminosity,
         })
-    data = {
-        "meta": model_to_dict(meta_data),
-        "flux_data": flux_data
-    }
-    return HttpResponse(simplejson.dumps(data), content_type="application/json")
+
+    return HttpResponse(simplejson.dumps({"flux_data": data, "frame": frame}), content_type="application/json")
 
 
 def fitter(request):
