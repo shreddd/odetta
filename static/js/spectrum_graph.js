@@ -9,74 +9,74 @@ width = 1000 - margin.left - margin.right;
 height = 500 - margin.top - margin.bottom;
 
 var x = d3.scale.linear()
-.domain([0,24000])
-            .range([0, width]); //X-Scale
-            var y = d3.scale.linear()
-            .domain([0,8e+39])
-            .range([height, 0]); //y-Scale
+    .domain([0,24000])
+    .range([0, width]); //X-Scale
+var y = d3.scale.linear()
+    .domain([0,8e+39])
+    .range([height, 0]); //y-Scale
 
-            var line = d3.svg.line()
-            .x(function (d) {
-                return x(d.wavelength);
-            })
-            .y(function (d) {
-                return y(d.lum);
-            });
+var line = d3.svg.line()
+    .x(function (d) {
+        return x(d.wavelength);
+    })
+    .y(function (d) {
+        return y(d.lum);
+    });
 
-            var zoom = d3.behavior.zoom()
-            .x(x)
-            .y(y)
-            .on("zoom", function(){
-                if(d3.event.sourceEvent.which!=3){
-                    refresh();
-                }
-            });
-            var zoomRect = true;
-            svg = d3.select('.graph')
-            .append("svg:svg")
-            .attr('width', width + margin.left + margin.right)
-            .attr('height', height + margin.top + margin.bottom)
-            .append("svg:g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .call(zoom)
-            .append("g")
-            .on("mouseup", function(){
-                d3.select('body').style("cursor", null);
-            })
-            .on("mousedown", function() {
-                d3.select('body').style("cursor", "move");
-                if (d3.event.which != 3) return;
-                var e = this,
-                origin = d3.mouse(e),
-                rect = svg.append("rect").attr("class", "zoom");
-                d3.select("body").classed("noselect", true);
-                origin[0] = Math.max(0, Math.min(width, origin[0]));
-                origin[1] = Math.max(0, Math.min(height, origin[1]));
-                d3.select(window)
-                .on("mousemove.zoomRect", function() {
-                    var m = d3.mouse(e);
-                    m[0] = Math.max(0, Math.min(width, m[0]));
-                    m[1] = Math.max(0, Math.min(height, m[1]));
-                    rect.attr("x", Math.min(origin[0], m[0]))
-                    .attr("y", Math.min(origin[1], m[1]))
-                    .attr("width", Math.abs(m[0] - origin[0]))
-                    .attr("height", Math.abs(m[1] - origin[1]));
-                })
-                .on("mouseup.zoomRect", function() {
-                    d3.select(window).on("mousemove.zoomRect", null).on("mouseup.zoomRect", null);
-                    d3.select("body").classed("noselect", false);
-                    var m = d3.mouse(e);
-                    m[0] = Math.max(0, Math.min(width, m[0]));
-                    m[1] = Math.max(0, Math.min(height, m[1]));
-                    if (m[0] !== origin[0] && m[1] !== origin[1]) {
-                        zoom.x(x.domain([origin[0], m[0]].map(x.invert).sort(function(a,b){return a > b;})))
-                        .y(y.domain([origin[1], m[1]].map(y.invert).sort(function(a,b){return a > b;})));
-                    }
-                    rect.remove();
-                    refresh();
-                }, true);
-                d3.event.stopPropagation();
-            });
+var zoom = d3.behavior.zoom()
+    .x(x)
+    .y(y)
+    .on("zoom", function(){
+        if(d3.event.sourceEvent.which!=3){
+            refresh();
+        }
+    });
+var zoomRect = true;
+    svg = d3.select('.graph')
+    .append("svg:svg")
+    .attr('width', width + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom)
+    .append("svg:g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .call(zoom)
+    .append("g")
+    .on("mouseup", function(){
+        d3.select('body').style("cursor", null);
+    })
+    .on("mousedown", function() {
+        d3.select('body').style("cursor", "move");
+        if (d3.event.which != 3) return;
+        var e = this,
+        origin = d3.mouse(e),
+        rect = svg.append("rect").attr("class", "zoom");
+        d3.select("body").classed("noselect", true);
+        origin[0] = Math.max(0, Math.min(width, origin[0]));
+        origin[1] = Math.max(0, Math.min(height, origin[1]));
+        d3.select(window)
+        .on("mousemove.zoomRect", function() {
+            var m = d3.mouse(e);
+            m[0] = Math.max(0, Math.min(width, m[0]));
+            m[1] = Math.max(0, Math.min(height, m[1]));
+            rect.attr("x", Math.min(origin[0], m[0]))
+            .attr("y", Math.min(origin[1], m[1]))
+            .attr("width", Math.abs(m[0] - origin[0]))
+            .attr("height", Math.abs(m[1] - origin[1]));
+        })
+        .on("mouseup.zoomRect", function() {
+            d3.select(window).on("mousemove.zoomRect", null).on("mouseup.zoomRect", null);
+            d3.select("body").classed("noselect", false);
+            var m = d3.mouse(e);
+            m[0] = Math.max(0, Math.min(width, m[0]));
+            m[1] = Math.max(0, Math.min(height, m[1]));
+            if (m[0] !== origin[0] && m[1] !== origin[1]) {
+                zoom.x(x.domain([origin[0], m[0]].map(x.invert).sort(function(a,b){return a > b;})))
+                .y(y.domain([origin[1], m[1]].map(y.invert).sort(function(a,b){return a > b;})));
+            }
+            rect.remove();
+            refresh();
+        }, true);
+        d3.event.stopPropagation();
+    });
 
 svg.append("svg:rect")
 .attr("width", width)
@@ -218,14 +218,14 @@ function runAnimation(start, end, speed){
         animation = clearInterval(animation);
     }
     currFrame = start;
-    animation = setInterval(getNextFrame, speed)
+    animation = setInterval(getNextFrame, speed);
 }
 
 function getNextFrame(){
     getData(++currFrame);
 }
 
-function preloadData(start,end){
+function preloadData(start, end){
     for(var x=start; x<end; x++){
         d3.json("/ajax/plot/"+m_id+"/"+x+"/", function(error, data){
             if (error){

@@ -25,21 +25,19 @@ def search_models(request):
     if request.method == "GET" and len(request.GET):
         search_form = SearchForm(data=request.GET)
         if search_form.is_valid():
-
             # Shows the detailed page if m_id is inputed
-            if search_form.cleaned_data['m_id']:
-                return redirect(plot, search_form.cleaned_data["m_id"])
+            if search_form.cleaned_data['m_type_id']:
+                return redirect(plot, search_form.cleaned_data["m_type_id"])
 
             # Searches for metadata matching the criteria
-            search_query = Q()
-            if search_form.cleaned_data["percent_oxygen"]:
-                search_query = search_query | Q(percent_oxygen=search_form.cleaned_data["percent_oxygen"])
-            if search_form.cleaned_data["percent_carbon"]:
-                search_query = search_query | Q(percent_carbon=search_form.cleaned_data["percent_carbon"])
+            search_query = {}
+            for field in request.GET:
+                if request.GET.get(field):
+                    search_query[field] = request.GET.get(field)
 
             # Deals with paging of search results
             page = request.GET.get("page", 1)
-            result_list = MetaDd2D.objects.filter(search_query).order_by("m_id")
+            result_list = Models.objects.filter(**search_query).order_by("m_type_id")
             pages = Paginator(result_list, MAX_ENTRIES)
             try:
                 results = pages.page(page)
@@ -67,9 +65,10 @@ def search_models(request):
     return render_to_response('search.html', {"form": search_form}, context_instance=RequestContext(request))
 
 
-def plot(request, id):
-    qset = Fluxvals.objects.filter(m_id=id)
-    meta_data = MetaDd2D.objects.get(m_id=id)
+def plot(request, m_type_id, frame=0):
+    model = Models.objects.filter(m_type_id=m_type_id)
+    meta_data = MetaDd2D.objects.filter(m_type_id=m_type_id).order_by("t_expl", "-mu")[int(frame)]
+    qset = Fluxvals.objects.filter(m_id=meta_data.m_id)
     flux_data = []
     for rec in qset:
         flux_data.append({

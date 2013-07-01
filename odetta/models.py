@@ -26,6 +26,7 @@ class Fluxvals(models.Model):
 
 class MetaDd2D(models.Model):
     m_id = models.BigIntegerField(primary_key=True)
+    m_type_id = models.IntegerField()
     modelname = models.CharField(max_length=40, blank=True)
     modeltype = models.CharField(max_length=40, blank=True)
     modeldim = models.SmallIntegerField(null=True, blank=True)
@@ -61,6 +62,9 @@ class Models(models.Model):
 
 
 class SearchForm(forms.Form):
-    m_id = forms.IntegerField(required=False, label=u'Model ID')
-    percent_oxygen = forms.FloatField(required=False, label=u'Percent Carbon')
-    percent_carbon = forms.FloatField(required=False, label=u'Percent Oxygen')
+    m_type_id = forms.IntegerField(required=False, label='Model ID')
+    modeltype = forms.CharField(required=False, label="Model Type")
+    modeldim = forms.IntegerField(required=False, label="Model Dimension")
+    date_entered = forms.DateField(required=False, label="Date Entered")
+    citation = forms.CharField(required=False, label="Citation")
+    sntype = forms.CharField(required=False, label="SN Type")
