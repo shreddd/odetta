@@ -1,4 +1,5 @@
-PROJECT_DIR = "/Users/tsun/Documents/Projects/odetta/"
+import os.path
+PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..')) + "/"
 # Django settings for odetta project.
 
 DEBUG = True
