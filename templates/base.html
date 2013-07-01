@@ -9,8 +9,8 @@
     <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="/static/css/base.css" type="text/css" />
     <script type="text/javascript">
-    var x = 0;
-    var y = 0;
+    var xPos= 0;
+    var yPos= 0;
     var xSpeed = 1;
     var ySpeed = 1;
     var count = 0;
@@ -30,13 +30,13 @@
     function scrollBG(){
         scrolling = clearInterval(scrolling);
         scrolling = setInterval(function(){
-            $("header").css("backgroundPosition", x+"px "+y+"px");
-            x+=xSpeed;
-            y+=ySpeed;
-            if(x>900||x<0){
+            $("header").css("backgroundPosition", xPos + "px " + yPos+ "px");
+            xPos+= xSpeed;
+            yPos+= ySpeed;
+            if(xPos> 900||xPos<0){
                 xSpeed*=-1;
             }
-            if(y>576||y<0){
+            if(yPos>576|| yPos<0){
                 ySpeed*=-1;
             }
         }, 40);
