@@ -19,32 +19,104 @@
         }
         #frame-slider{
             height: 10px;
+            margin: 10px 10px;
         }
-        #options>*{
-            margin:5px 0;
+        #options{
+            padding:1em;
+            border: 1px solid black;
         }
+        .graph{
+            position:relative;
+        }
+        #loadingscreen{
+            top:0;
+            bottom:0;
+            left:0;
+            right:0;
+            position:absolute;
+            width:100%;
+            height:100%;
+            background-color: rgba(0,0,0,0.9);
+        }
+        #loadingscreen img{
+            margin:250px 50%;
+        }
+        #startFrame, #endFrame, #runAnimation, #loadData{
+            margin-bottom: 10px;
+        }
+        #runAnimation{
+            display:none;
+        }
+        #startFrame, #endFrame{
+            width:60px;
+        }
+        progress {
+            width:500px;
+            height:20px;
+            display:none;
+        }
+        progress::-webkit-progress-bar {
+            width:500px;
+            height:20px;
+        }
+        progress::-webkit-progress-value {
+            width:500px;
+            height:20px;
+        }
+        progress::-moz-progress-bar {
+            width:500px;
+            height:20px;
+        }
+
     </style>
     <script type="text/javascript">
     var m_id = {{meta_data.m_id}};
     $(function() {
         // preloadData(0,100);
         $( "#frame-slider" ).slider({
-          value: 0,
-          min: 0,
-          max: 1000,
-          slide: function( event, ui ){
-            getData(ui.value);
-            $("#frame").val(ui.value);
-        },
-        change: function(event, ui){
-            getData(ui.value);
-            $("#frame").val(ui.value);
-        }
-    });
+            value: 0,
+            min: 0,
+            max: 1000,
+            slide: function( event, ui ){
+                getData(ui.value);
+                $("#frame").val(ui.value);
+                if(ui.value < parseInt($("#startFrame").val())){
+                    $("#startFrame").val(ui.value);
+                    $("#startFrame").change();
+                }
+                if(ui.value > parseInt($("#endFrame").val())){
+                    $("#endFrame").val(ui.value);
+                    $("#endFrame").change();
+                }
+            },
+            change: function(event, ui){
+                getData(ui.value);
+                $("#frame").val(ui.value);
+            }
+        });
         $("#frame").change(function(){
-            console.log($("#frame-slider").slider("option", "value"));
             $("#frame-slider").slider("option", "value", $(this).val().replace(/[a-zA-Z]/g, ""));
         });
+        $("#loadData").click(function(){
+            if($("#startFrame").val()!="" && $("#endFrame").val()!=""){
+                preloadData($("#startFrame").val(), $("#endFrame").val());
+            }
+        });
+        $("#startFrame").change(function(){
+            $("#runAnimation").hide();
+        });
+        $("#endFrame").change(function(){
+            $("#runAnimation").hide();
+        });
+        $("#runAnimation").click(function(){
+            if(animation){
+                animation = clearInterval(animation);
+                $(this).text("Start");
+            }else{
+                runAnimation(50)
+                $(this).text("Stop")
+            }
+        })
     });
     </script>
 {% endblock head %}
@@ -64,13 +136,26 @@
     </div>
     <script type="text/javascript" src="/static/js/spectrum_graph.js"></script>
     <div id = "options">
-        <div class="btn-group">
-            <button class="btn" href="#" onclick="moveFrame(-1)"><i class="icon-chevron-left"></i></button>
-            <input type="text" id="frame" value="0"/>
-            <button class="btn" href="#" onclick="moveFrame(1)"><i class="icon-chevron-right"></i></button>
-            <button id = "restore" class="btn" onclick = "restoreScale()">Fit Graph</button>
+        <div id="graphOptions">
+            <h4>Graph Options</h4>
+            <div class="btn-group">
+                <button class="btn" href="#" onclick="moveFrame(-1)"><i class="icon-chevron-left"></i></button>
+                <input type="text" id="frame" value="0"/>
+                <button class="btn" href="#" onclick="moveFrame(1)"><i class="icon-chevron-right"></i></button>
+                <button id = "restore" class="btn" onclick = "restoreScale()">Fit Graph</button>
+            </div>
+            <div id="frame-slider"></div>
         </div>
-        <div id="frame-slider"></div>
+        <div id="animationSettings">
+            <h4>Animation Settings</h4>
+            <progress value="50" max="100"></progress>
+            <p>
+                Animate from <input type="number" min="0" placeholder="start" id="startFrame"/> to 
+                <input type="number" min="0" placeholder="end" id="endFrame"/>
+                <button class="btn" type="submit" id="loadData">Load Data</button>
+                <button class="btn" type="submit" id="runAnimation">Start</button>
+            </p>
+        </div>
     </div>
     <div id="details">
         <h2>Spectrum Details</h2>

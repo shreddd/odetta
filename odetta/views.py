@@ -93,7 +93,7 @@ def get_all_data(request, id, frame):
     try:
         timestep = timestep[int(frame)]
     except IndexError:
-        return HttpResponse(simplejson.dumps({"success": False, "error": "frame out of bounds", "max_frames": timestep.count()-1}))
+        return HttpResponse(simplejson.dumps({"success": False, "error": "frame out of bounds", "max_frames": timestep.count()-1}), content_type="application/json")
     data = []
     flux_data = Fluxvals.objects.filter(m_id=timestep.m_id)
     for rec in flux_data:
