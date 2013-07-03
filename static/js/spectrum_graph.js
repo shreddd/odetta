@@ -171,11 +171,11 @@ function refresh() {
 }
 
 function restoreScale(){
-    zoom.x(x.domain(d3.extent(frameData[currFrame], function (d) {
+    zoom.x(x.domain(d3.extent(frameData[currTime][currMu], function (d) {
         return d.wavelength;
     }))
     .range([0, width]))
-    .y(y.domain(d3.extent(frameData[currFrame], function (d) {
+    .y(y.domain(d3.extent(frameData[currTime][currMu], function (d) {
         return d.lum;
     }))
     .range([height, 0]));
@@ -207,7 +207,9 @@ function showCircles(){
     });
 }
 
-var currFrame = 0;
+
+var currTime = 0;
+var currMu = 0;
 var frameData = [];
 var clearData = true;
 var animation;
@@ -221,8 +223,8 @@ function runAnimation(speed){
 }
 
 function getNextFrame(){
-    if(currFrame >= animationStart && currFrame < animationEnd){
-        moveFrame(1);
+    if(currTime >= animationStart && currTime < animationEnd){
+        moveFrame(1, 0);
     }else{
         $("#runAnimation").click();
     }
@@ -234,66 +236,75 @@ var animationEnd = 0;
 function preloadData(start, end){
     animationStart = parseInt(start);
     animationEnd = parseInt(end);
-    currFrame = animationStart;
-    $("#frame-slider").slider("option", "value", currFrame);
-    $(".graph").append("<div id='loadingscreen'><img width='32px' height='32px' src='/static/img/loader.gif'/></div>");
-    $("#runAnimation").hide();
-    $("progress").attr("max", end-start);
-    $("progress").val(0);
-    $("progress").show();
+    currTime = animationStart;
+    // $("#frame-slider").slider("option", "value", currTime);
+    // $(".graph").append("<div id='loadingscreen'><img width='32px' height='32px' src='/static/img/loader.gif'/></div>");
+    // $("#runAnimation").hide();
+    // $("progress").attr("max", end-start);
+    // $("progress").val(0);
+    // $("progress").show();
+
     for(var x=animationStart; x<animationEnd; x++){
         if(frameData[x]==undefined){
             d3.json("/ajax/plot/"+m_id+"/"+x+"/", function(error, data){
                 if (error){
                     console.log(error);
                 }else{
-                    frameData[data.frame] = data.flux_data;
+                    frameData[data.time_step] = [];
+                    frameData[data.time_step][0] = data.flux_data;
                 }
-                $("progress").val($("progress").val()+1);
-                if($("progress").val()==$("progress").attr("max")){
-                    $("#loadingscreen").remove();
-                    $("progress").hide();
-                    $("#runAnimation").show();
-                }
+                // $("progress").val($("progress").val()+1);
+                // if($("progress").val()==$("progress").attr("max")){
+                //     $("#loadingscreen").remove();
+                //     $("progress").hide();
+                //     $("#runAnimation").show();
+                // }
             });
         }else{
-            $("progress").val($("progress").val()+1);
-            if($("progress").val()==$("progress").attr("max")){
-                $("#loadingscreen").remove();
-                $("progress").hide();
-                $("#runAnimation").show();
-            }
+            // $("progress").val($("progress").val()+1);
+            // if($("progress").val()==$("progress").attr("max")){
+            //     $("#loadingscreen").remove();
+            //     $("progress").hide();
+            //     $("#runAnimation").show();
+            // }
         }
     }
 }
 
-function moveFrame(frames){
-    currFrame+=frames;
-    getData(currFrame);
-    $("#frame-slider").slider("option", "value", currFrame);
+function moveFrame(time, mu){
+    currTime+=parseInt(time);
+    currMu+=parseInt(mu);
+    getData(currTime, currMu);
+    // $("#frame-slider").slider("option", "value", currFrame);
 }
 
-function getData(frame){            
-    if(frameData[frame]){
-        graphData(frameData[frame]);
-        currFrame = frame;
+function getData(time, mu){
+    if(frameData[time]&&frameData[time][mu]){
+        graphData(frameData[time][mu]);
+        currTime = parseInt(time);
+        currMu = parseInt(mu);
         if(rescale){
             restoreScale();
-        }              
+        }
     }else{
-        d3.json("/ajax/plot/"+m_id+"/"+frame+"/", function(error, data){
-            if (error){
-                alert(error);
+        d3.json("/ajax/plot/"+m_id+"/"+time+"/"+mu+"/", function(error, data){
+            if (error || data.success == false){
+                if(error){
+                    console.log(error);
+                }
+                console.log(data.error);
                 if(animation){
                     animation = clearInterval(animation);
                 }
             }else{
-                frameData[data.frame] = data.flux_data;
+                frameData[data.time_step] = [];
+                frameData[data.time_step][data.mu_step] = data.flux_data;
                 graphData(data.flux_data);
-                currFrame = frame;
+                currTime = parseInt(data.time_step);
+                currMu = parseInt(data.mu_step);
                 if(rescale){
                     restoreScale();
-                }  
+                }
             }
         });
     }
