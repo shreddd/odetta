@@ -15,7 +15,7 @@ class Chi2Test(models.Model):
 
 
 class Fluxvals(models.Model):
-    m_id = models.IntegerField(primary_key=True)
+    spec_id = models.IntegerField(primary_key=True)
     wavelength = models.FloatField()
     luminosity = models.FloatField(null=True, blank=True)
     photon_count = models.FloatField(null=True, blank=True)
@@ -25,7 +25,8 @@ class Fluxvals(models.Model):
 
 
 class MetaDd2D(models.Model):
-    m_id = models.BigIntegerField(primary_key=True)
+    spec_id = models.BigIntegerField(primary_key=True)
+    model_id = models.IntegerField()
     m_type_id = models.IntegerField()
     modelname = models.CharField(max_length=40, blank=True)
     modeltype = models.CharField(max_length=40, blank=True)

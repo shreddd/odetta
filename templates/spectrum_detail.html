@@ -21,10 +21,6 @@
             height: 10px;
             margin: 10px 10px;
         }
-        #options{
-            padding:1em;
-            border: 1px solid black;
-        }
         .graph{
             position:relative;
         }
@@ -70,7 +66,7 @@
 
     </style>
     <script type="text/javascript">
-    var m_id = {{meta_data.m_id}};
+    var m_id = {{meta_data.model_id}};
     $(function() {
         // preloadData(0,100);
         $( "#frame-slider" ).slider({
@@ -125,17 +121,17 @@
     <li class="nav-header">Index</li>
     <li><a href="#graph">Graph</a></li>
     <li><a href="#details">Details</a></li>
-    <li><a href="/plot/{{meta_data.m_id}}/img/?download=1">Download Image</a></li>
+    <li><a href="/plot/{{meta_data.model_id}}/img/?download=1">Download Image</a></li>
 {% endblock nav %}
 
 {% block content %}
-    <h1>Plot {{meta_data.m_id}}</h1>
+    <h1>Plot {{meta_data.spec_id}}</h1>
     <div class="graph" id="graph" oncontextmenu="return false">
         <h2>Spectrum Graph</h2>
 
     </div>
     <script type="text/javascript" src="/static/js/spectrum_graph.js"></script>
-    <div id = "options">
+    <div id = "options" class="well">
         <div id="graphOptions">
             <h4>Graph Options</h4>
             <div class="btn-group">

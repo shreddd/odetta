@@ -65,24 +65,53 @@ def search_models(request):
     return render_to_response('search.html', {"form": search_form}, context_instance=RequestContext(request))
 
 
-def plot(request, m_type_id, frame=0):
-    model = Models.objects.filter(m_type_id=m_type_id)
-    meta_data = MetaDd2D.objects.filter(m_type_id=m_type_id).order_by("t_expl", "-mu")[int(frame)]
-    qset = Fluxvals.objects.filter(m_id=meta_data.m_id)
+def plot(request, model_id):
+    meta_data = MetaDd2D.objects.filter(model_id=model_id).order_by("t_expl", "-mu")
+    if meta_data.count() <= 0:
+        raise Http404
+    meta_data = meta_data[0]
+
+    # Creates a detail array for display on table below graph
+    # Excludes the fields in the excludes array
+    details = []
+    exclude = ["t_expl", "mu"]
+    for field in meta_data._meta.get_all_field_names():
+        if field not in exclude:
+            details.append((meta_data._meta.get_field(field).verbose_name, getattr(meta_data, field.__str__())))
+    return render_to_response("spectrum_detail.html", {"details": details, "meta_data": meta_data}, context_instance=RequestContext(request))
+
+
+def get_plot_data(request, model_id, time_step=0, mu_step=0):
+    model = MetaDd2D.objects.filter(model_id=model_id)
+    if model.count() <= 0:
+        raise Http404
+
+    all_time_steps = model.values("t_expl").distinct("t_expl").order_by("t_expl")
+    t_expl = all_time_steps[time_step]["t_expl"]
+
+    all_mu_steps = model.filter(t_expl=t_expl).values("mu").order_by("-mu")
+    mu = all_mu_steps[mu_step]["mu"]
+
+    # Gets the meta data based on the calculated mu and t_expl
+    # Uses range to prevent floating point errors
+    meta_data = model.get(mu__range=(mu-0.01, mu+0.01), t_expl__range=(t_expl-0.01, t_expl+0.01))
+
+    # Populates a flux data array from the spec_id of the selected meta_data
+    qset = Fluxvals.objects.filter(spec_id=meta_data.spec_id)
     flux_data = []
     for rec in qset:
         flux_data.append({
-            "wavelength": rec.wavelength,
-            "lum": rec.luminosity,
+            "wavelength": rec.wavelength,  # Graph's X-Axis
+            "lum": rec.luminosity,  # Graph's Y-Axis
         })
     data = {
-        "meta": model_to_dict(meta_data),
-        "flux_data": flux_data
+        "model_id": meta_data.model_id,
+        "t_expl": t_expl,
+        "tot_time_steps": all_time_steps.count(),
+        "mu": mu,
+        "tot_mu_steps": all_mu_steps.count(),
+        "flux_data": flux_data,
     }
-    details = []
-    for field in meta_data._meta.get_all_field_names():
-        details.append((meta_data._meta.get_field(field).verbose_name, getattr(meta_data, field.__str__())))
-    # raise Exception(details)
     return render_to_response("spectrum_detail.html", {"data": simplejson.dumps(data), "details": details, "meta_data": meta_data}, context_instance=RequestContext(request))
 
 
