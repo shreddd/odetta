@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from odetta.models import Fluxvals, MetaDd2D, Models, SearchForm
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -86,11 +86,16 @@ def get_plot_data(request, model_id, time_step=0, mu_step=0):
     if model.count() <= 0:
         raise Http404
 
-    all_time_steps = model.values("t_expl").distinct("t_expl").order_by("t_expl")
-    t_expl = all_time_steps[time_step]["t_expl"]
-
-    all_mu_steps = model.filter(t_expl=t_expl).values("mu").order_by("-mu")
-    mu = all_mu_steps[mu_step]["mu"]
+    try:
+        all_time_steps = model.values("t_expl").distinct("t_expl").order_by("t_expl")
+        t_expl = all_time_steps[int(time_step)]["t_expl"]
+    except IndexError:
+        return HttpResponse(simplejson.dumps({"success": False, "error": "time_step index out of bounds", "max_time_steps": all_time_steps.count()}), content_type="application/json")
+    try:
+        all_mu_steps = model.filter(t_expl=t_expl).values("mu").order_by("-mu")
+        mu = all_mu_steps[int(mu_step)]["mu"]
+    except IndexError:
+        return HttpResponse(simplejson.dumps({"success": False, "error": "mu_step index out of bounds", "max_mu_steps": all_mu_steps.count()}), content_type="application/json")
 
     # Gets the meta data based on the calculated mu and t_expl
     # Uses range to prevent floating point errors
@@ -105,33 +110,79 @@ def get_plot_data(request, model_id, time_step=0, mu_step=0):
             "lum": rec.luminosity,  # Graph's Y-Axis
         })
     data = {
-        "model_id": meta_data.model_id,
-        "t_expl": t_expl,
-        "tot_time_steps": all_time_steps.count(),
-        "mu": mu,
-        "tot_mu_steps": all_mu_steps.count(),
+        "model_id": int(meta_data.model_id),
+        "time_step": int(time_step),
+        "t_expl": float(t_expl),
+        "max_time_steps": all_time_steps.count()-1,
+        "mu_step": int(mu_step),
+        "mu": float(mu),
+        "max_mu_steps": all_mu_steps.count()-1,
         "flux_data": flux_data,
     }
-    return render_to_response("spectrum_detail.html", {"data": simplejson.dumps(data), "details": details, "meta_data": meta_data}, context_instance=RequestContext(request))
+    return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 
-def get_all_data(request, id, frame):
-    qset = Fluxvals.objects.filter(m_id=id)
-    meta_data = MetaDd2D.objects.get(m_id=id)
-    timestep = MetaDd2D.objects.filter(mu__contains=meta_data.mu).order_by("m_id")
+def batch_time_data(request, model_id, mu_step):
+    model = MetaDd2D.objects.filter(model_id=model_id)
+
+    if model.count() <= 0:
+        raise Http404
+
     try:
-        timestep = timestep[int(frame)]
+        all_mu_steps = model.values("mu").distinct("mu").order_by("-mu")
+        mu = all_mu_steps[int(mu_step)]["mu"]
     except IndexError:
-        return HttpResponse(simplejson.dumps({"success": False, "error": "frame out of bounds", "max_frames": timestep.count()-1}), content_type="application/json")
-    data = []
-    flux_data = Fluxvals.objects.filter(m_id=timestep.m_id)
-    for rec in flux_data:
-        data.append({
-            "wavelength": rec.wavelength,
-            "lum": rec.luminosity,
-        })
+        return HttpResponse(simplejson.dumps({"success": False, "error": "mu_step index out of bounds", "max_mu_steps": all_mu_steps.count()}), content_type="application/json")
 
-    return HttpResponse(simplejson.dumps({"flux_data": data, "frame": frame}), content_type="application/json")
+    meta_datas = model.filter(mu__range=(mu-0.01, mu+0.01)).order_by("t_expl")
+    data = []
+    index = 0
+    for m in meta_datas:
+        data.append({
+            "time_step": int(index),
+            "mu_step": int(mu_step),
+            "flux_data": [],
+        })
+        qset = Fluxvals.objects.filter(spec_id=m.spec_id)
+        for rec in qset:
+            data[index]['flux_data'].append({
+                "wavelength": rec.wavelength,  # Graph's X-Axis
+                "lum": rec.luminosity,  # Graph's Y-Axis
+            })
+        index += 1
+    return HttpResponse(simplejson.dumps(data), content_type="application/json")
+
+
+def batch_angle_data(request, model_id, time_step):
+    model = MetaDd2D.objects.filter(model_id=model_id)
+
+    if model.count() <= 0:
+        raise Http404
+
+    try:
+        all_time_steps = model.values("t_expl").distinct("t_expl").order_by("t_expl")
+        t_expl = all_time_steps[int(time_step)]["t_expl"]
+    except IndexError:
+        return HttpResponse(simplejson.dumps({"success": False, "error": "time_step index out of bounds", "max_time_steps": all_time_steps.count()}), content_type="application/json")
+
+    meta_datas = model.filter(t_expl=t_expl).order_by("-mu")
+    data = []
+    index = 0
+    for m in meta_datas:
+        data.append({
+            "time_step": int(time_step),
+            "mu_step": int(index),
+            "flux_data": [],
+        })
+        qset = Fluxvals.objects.filter(spec_id=m.spec_id)
+        for rec in qset:
+            data[index]['flux_data'].append({
+                "wavelength": rec.wavelength,  # Graph's X-Axis
+                "lum": rec.luminosity,  # Graph's Y-Axis
+            })
+        index += 1
+    import ipdb; ipdb.set_trace()
+    return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 
 def fitter(request):
