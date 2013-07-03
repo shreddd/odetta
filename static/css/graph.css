@@ -28,3 +28,6 @@
     fill:rgba(175,175,175,0.25);
     stroke:black;
 }
+.labels{
+    font-size: 16px;
+}

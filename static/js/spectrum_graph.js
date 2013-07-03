@@ -1,8 +1,8 @@
 margin = {
     top: 20,
     right: 50,
-    bottom: 20,
-    left: 50
+    bottom: 50,
+    left: 80
 };
 
 width = 1000 - margin.left - margin.right;
@@ -143,6 +143,22 @@ var chartBody = svg.append("g")
 var circlesLayer = chartBody.append("g")
 .attr("id","circles")
 
+svg.append("text")
+.attr("class","labels")
+.attr("text-anchor","end")
+.attr("x",width / 2)
+.attr("y",height + 40)
+.text("Wavelength (Å)")
+
+svg.append("text")
+.attr("class","labels")
+.attr("text-anchor","end")
+.attr("x", -height/2 + margin.bottom)
+.attr("y", -75)
+.attr("dy","0.75em")
+.attr("transform","rotate(-90)")
+.text("Luminosity (lux)")
+
 function graphData(data){
     if(clearData){
         chartBody.selectAll(".line").remove();         
@@ -213,57 +229,28 @@ var clearData = true;
 var animation;
 var rescale = false;
 
-function runAnimation(speed){
+function runAnimation(start, end, speed){
     if(animation){
         animation = clearInterval(animation);
     }
+    currFrame = start;
     animation = setInterval(getNextFrame, speed);
 }
 
 function getNextFrame(){
-    if(currFrame >= animationStart && currFrame < animationEnd){
-        moveFrame(1);
-    }else{
-        $("#runAnimation").click();
-    }
+    getData(++currFrame);
 }
 
-var animationStart = 0;
-var animationEnd = 0;
-
 function preloadData(start, end){
-    animationStart = parseInt(start);
-    animationEnd = parseInt(end);
-    currFrame = animationStart;
-    $("#frame-slider").slider("option", "value", currFrame);
-    $(".graph").append("<div id='loadingscreen'><img width='32px' height='32px' src='/static/img/loader.gif'/></div>");
-    $("#runAnimation").hide();
-    $("progress").attr("max", end-start);
-    $("progress").val(0);
-    $("progress").show();
-    for(var x=animationStart; x<animationEnd; x++){
-        if(frameData[x]==undefined){
-            d3.json("/ajax/plot/"+m_id+"/"+x+"/", function(error, data){
-                if (error){
-                    console.log(error);
-                }else{
-                    frameData[data.frame] = data.flux_data;
-                }
-                $("progress").val($("progress").val()+1);
-                if($("progress").val()==$("progress").attr("max")){
-                    $("#loadingscreen").remove();
-                    $("progress").hide();
-                    $("#runAnimation").show();
-                }
-            });
-        }else{
-            $("progress").val($("progress").val()+1);
-            if($("progress").val()==$("progress").attr("max")){
-                $("#loadingscreen").remove();
-                $("progress").hide();
-                $("#runAnimation").show();
+    
+    for(var x=start; x<end; x++){
+        d3.json("/ajax/plot/"+m_id+"/"+x+"/", function(error, data){
+            if (error){
+                console.log(error);
+            }else{
+                frameData[data.frame] = data.flux_data;
             }
-        }
+        });
     }
 }
 
