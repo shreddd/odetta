@@ -1,5 +1,5 @@
 from django.http import HttpResponse, Http404
-from odetta.models import Fluxvals, MetaDd2D, Models, SearchForm
+from odetta.models import Fluxvals, MetaDd2D, Models, SearchForm, get_mu_max, get_time_max
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import pylab as pl
@@ -26,18 +26,21 @@ def search_models(request):
         search_form = SearchForm(data=request.GET)
         if search_form.is_valid():
             # Shows the detailed page if m_id is inputed
-            if search_form.cleaned_data['m_type_id']:
-                return redirect(plot, search_form.cleaned_data["m_type_id"])
+            if search_form.cleaned_data['model_id']:
+                return redirect(plot, search_form.cleaned_data["model_id"])
 
             # Searches for metadata matching the criteria
             search_query = {}
             for field in request.GET:
-                if request.GET.get(field):
+                if request.GET.get(field) and field != "page":
                     search_query[field] = request.GET.get(field)
 
             # Deals with paging of search results
             page = request.GET.get("page", 1)
-            result_list = Models.objects.filter(**search_query).order_by("m_type_id")
+            matched_models = Models.objects.filter(**search_query).order_by("m_type_id")
+            result_list = MetaDd2D.objects.none()
+            for model in matched_models:
+                result_list = result_list | MetaDd2D.objects.filter(m_type_id=model.m_type_id).order_by("model_id").distinct("model_id")
             pages = Paginator(result_list, MAX_ENTRIES)
             try:
                 results = pages.page(page)
@@ -78,7 +81,7 @@ def plot(request, model_id):
     for field in meta_data._meta.get_all_field_names():
         if field not in exclude:
             details.append((meta_data._meta.get_field(field).verbose_name, getattr(meta_data, field.__str__())))
-    return render_to_response("spectrum_detail.html", {"details": details, "meta_data": meta_data}, context_instance=RequestContext(request))
+    return render_to_response("spectrum_detail.html", {"details": details, "meta_data": meta_data, "mu_max": get_mu_max(model_id), "time_max": get_time_max(model_id)}, context_instance=RequestContext(request))
 
 
 def get_plot_data(request, model_id, time_step=0, mu_step=0):
@@ -215,11 +218,28 @@ def run_all_data(request, x2, y2, y2var):
     return response
 
 
-def plot_mid(request, id):
-    qset = Fluxvals.objects.filter(m_id=id)
+def plot_img(request, model_id, time_step=0, mu_step=0):
+    model = MetaDd2D.objects.filter(model_id=model_id)
+    if model.count() <= 0:
+        raise Http404
+
+    try:
+        all_time_steps = model.values("t_expl").distinct("t_expl").order_by("t_expl")
+        t_expl = all_time_steps[int(time_step)]["t_expl"]
+        all_mu_steps = model.filter(t_expl=t_expl).values("mu").order_by("-mu")
+        mu = all_mu_steps[int(mu_step)]["mu"]
+    except IndexError:
+        raise Http404
+
+    # Gets the meta data based on the calculated mu and t_expl
+    # Uses range to prevent floating point errors
+    meta_data = model.get(mu__range=(mu-0.01, mu+0.01), t_expl__range=(t_expl-0.01, t_expl+0.01))
+
+    # Populates a flux data array from the spec_id of the selected meta_data
+    qset = Fluxvals.objects.filter(spec_id=meta_data.spec_id)
     wave = [rec.wavelength for rec in qset]
     lum = [rec.luminosity for rec in qset]
-    ttle = 'Model '+str(id)
+    ttle = 'Model '+str(spec_id)
     xl = 'Wavelength (A)'
     yl = 'Luminosity'
 

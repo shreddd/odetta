@@ -49,6 +49,26 @@ class MetaDd2D(models.Model):
     class Meta:
         db_table = 'meta_dd2d'
 
+    @property
+    def date_entered(self):
+        return Models.objects.values("date_entered").get(m_type_id=self.m_type_id)['date_entered']
+
+    @property
+    def sntype(self):
+        return Models.objects.values("sntype").get(m_type_id=self.m_type_id)['sntype']
+
+    @property
+    def citation(self):
+        return Models.objects.values("citation").get(m_type_id=self.m_type_id)['citation']
+
+
+def get_time_max(model_id):
+    return MetaDd2D.objects.filter(model_id=model_id).values("t_expl").distinct("t_expl").order_by("t_expl").count() - 1
+
+
+def get_mu_max(model_id):
+    return MetaDd2D.objects.filter(model_id=model_id).values("mu").distinct("mu").order_by("-mu").count() - 1
+
 
 class Models(models.Model):
     modeltype = models.CharField(max_length=40, blank=True)
@@ -63,7 +83,7 @@ class Models(models.Model):
 
 
 class SearchForm(forms.Form):
-    m_type_id = forms.IntegerField(required=False, label='Model ID')
+    model_id = forms.IntegerField(required=False, label='Model ID')
     modeltype = forms.CharField(required=False, label="Model Type")
     modeldim = forms.IntegerField(required=False, label="Model Dimension")
     date_entered = forms.DateField(required=False, label="Date Entered")

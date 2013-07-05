@@ -72,7 +72,7 @@
         $( "#time-slider" ).slider({
             value: 0,
             min: 0,
-            max: 42,
+            max: {{time_max}},
             slide: function( event, ui ){
                 getData(ui.value, currMu);
                 $("#time").val(ui.value);
@@ -85,7 +85,7 @@
         $( "#mu-slider" ).slider({
             value: 0,
             min: 0,
-            max: 29,
+            max: {{mu_max}},
             slide: function( event, ui ){
                 getData(currTime, ui.value);
                 $("#angleVal").val(ui.value);
@@ -109,14 +109,13 @@
     <li class="nav-header">Index</li>
     <li><a href="#graph">Graph</a></li>
     <li><a href="#details">Details</a></li>
-    <li><a href="/plot/{{meta_data.model_id}}/img/?download=1">Download Image</a></li>
+    <li><a href="{% url 'odetta.views.plot_img' model_id=meta_data.model_id time_step=0 mu_step=0%}?download=1">Download Image</a></li>
 {% endblock nav %}
 
 {% block content %}
-    <h1>Plot {{meta_data.spec_id}}</h1>
+    <h1>Model {{meta_data.model_id}}: {{meta_data.modelname}}</h1>
     <div class="graph" id="graph" oncontextmenu="return false">
         <h2>Spectrum Graph</h2>
-
     </div>
     <script type="text/javascript" src="/static/js/spectrum_graph.js"></script>
     <div id = "options" class="well">

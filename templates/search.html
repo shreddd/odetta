@@ -44,8 +44,8 @@
 	<div class="span12 results">
 		{% for result in results %}
 			<div class="result">
-				<a href="{% url 'odetta.views.plot' result.m_type_id %}">Entry {{result.m_type_id}}</a>
-				<small><a href="/plot/{{result.m_type_id}}/img/">img</a></small>
+				<a href="{% url 'odetta.views.plot' result.model_id %}">Entry {{result.model_id}}: {{result.modelname}}</a>
+				<small><a href="/plot/{{result.model_id}}/img/">img</a></small>
 				<div class="details">
 					<strong>{{result.citation}}</strong><br/>
 					Model Type: {{result.modeltype}}, Dimension: {{result.modeldim}}D, Date Entered: {{result.date_entered}}, SN Type: {{result.sntype}}
