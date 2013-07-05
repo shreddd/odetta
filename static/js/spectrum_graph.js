@@ -186,6 +186,7 @@ function refresh() {
     .attr("d", line);
     if(zoom.scale() > 10){
         showCircles();
+        resetMouseListeners();
     } else{
         d3.selectAll("circle").remove();
     }
@@ -310,4 +311,60 @@ function getData(time, mu){
             }
         });
     }
+}
+function resetMouseListeners(){
+    d3.selectAll("circle").on("mouseover",null);
+    d3.selectAll("circle").on("mouseout",null);
+    d3.selectAll("circle")
+        .on("mouseover",function(d){
+            d3.select(this)
+                .transition()
+                .duration(500)
+                .attr("opacity",0.75)
+                .attr("r", 5);
+
+            svg.append("text")
+                .attr("opacity",0)
+                .transition()
+                .duration(500)
+                .text("x:" + Math.floor((d.wavelength)))
+                .attr("x",function(){
+                    return x(d.wavelength) + 10;
+                })
+                .attr("y", function(){
+                    return y(d.lum) + 5;
+                })
+                .attr("fill","black")
+                .attr("font-family","sans-serif")
+                .attr("font-size",12)
+                .attr("class","info")
+                .attr("opacity",1.0);
+            svg.append("text")
+                .attr("opacity",0)
+                .transition()
+                .duration(500)
+                .text("y:" + Math.floor((d.lum)))
+                .attr("x",function(){
+                    return x(d.wavelength) + 10;
+                })
+                .attr("y", function(){
+                    return y(d.lum) + 25;
+                })
+                .attr("fill","black")
+                .attr("font-family","sans-serif")
+                .attr("font-size",12)
+                .attr("class","info")
+                .attr("opacity",1.0);
+        })
+        .on("mouseout",function(d){
+            d3.select(this)
+                .transition()
+                .duration(400)
+                .attr("opacity",1)
+                .attr("r",3);
+            svg.selectAll(".info")
+                .transition()
+                .duration(250)
+                .remove();
+        });
 }
