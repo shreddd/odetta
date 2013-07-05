@@ -181,7 +181,6 @@ def batch_angle_data(request, model_id, time_step):
                 "lum": rec.luminosity,  # Graph's Y-Axis
             })
         index += 1
-    import ipdb; ipdb.set_trace()
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 

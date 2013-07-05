@@ -12,12 +12,12 @@
         .span10 h1{
             text-align: center;
         }
-        #frame{
+        #time, #angleVal{
             width:30px;
             margin:0;
             text-align: center;
         }
-        #frame-slider{
+        #time-slider, #mu-slider{
             height: 10px;
             margin: 10px 10px;
         }
@@ -69,50 +69,38 @@
     var m_id = {{meta_data.model_id}};
     $(function() {
         // preloadData(0,100);
-        $( "#frame-slider" ).slider({
+        $( "#time-slider" ).slider({
             value: 0,
             min: 0,
-            max: 1000,
+            max: 42,
             slide: function( event, ui ){
-                getData(ui.value, 0);
-                $("#frame").val(ui.value);
-                if(ui.value < parseInt($("#startFrame").val())){
-                    $("#startFrame").val(ui.value);
-                    $("#startFrame").change();
-                }
-                if(ui.value > parseInt($("#endFrame").val())){
-                    $("#endFrame").val(ui.value);
-                    $("#endFrame").change();
-                }
+                getData(ui.value, currMu);
+                $("#time").val(ui.value);
             },
             change: function(event, ui){
-                getData(ui.value, 0);
-                $("#frame").val(ui.value);
+                getData(ui.value, currMu);
+                $("#time").val(ui.value);
             }
         });
-        $("#frame").change(function(){
-            $("#frame-slider").slider("option", "value", $(this).val().replace(/[a-zA-Z]/g, ""));
-        });
-        $("#loadData").click(function(){
-            if($("#startFrame").val()!="" && $("#endFrame").val()!=""){
-                preloadData($("#startFrame").val(), $("#endFrame").val());
+        $( "#mu-slider" ).slider({
+            value: 0,
+            min: 0,
+            max: 29,
+            slide: function( event, ui ){
+                getData(currTime, ui.value);
+                $("#angleVal").val(ui.value);
+            },
+            change: function(event, ui){
+                getData(currTime, ui.value);
+                $("#angleVal").val(ui.value);
             }
         });
-        $("#startFrame").change(function(){
-            $("#runAnimation").hide();
+        $("#time").change(function(){
+            $("#time-slider").slider("option", "value", $(this).val().replace(/[a-zA-Z]/g, ""));
         });
-        $("#endFrame").change(function(){
-            $("#runAnimation").hide();
+        $("#angleVal").change(function(){
+            $("#mu-slider").slider("option", "value", $(this).val().replace(/[a-zA-Z]/g, ""));
         });
-        $("#runAnimation").click(function(){
-            if(animation){
-                animation = clearInterval(animation);
-                $(this).text("Start");
-            }else{
-                runAnimation(50)
-                $(this).text("Stop")
-            }
-        })
     });
     </script>
 {% endblock head %}
@@ -136,21 +124,22 @@
             <h4>Graph Options</h4>
             <div class="btn-group">
                 <button class="btn" href="#" onclick="moveFrame(-1, 0)"><i class="icon-chevron-left"></i></button>
-                <input type="text" id="frame" value="0"/>
+                <input type="text" id="time" value="0"/>
                 <button class="btn" href="#" onclick="moveFrame(1, 0)"><i class="icon-chevron-right"></i></button>
                 <button id = "restore" class="btn" onclick = "restoreScale()">Fit Graph</button>
+                <button class="btn" onclick = "preloadData('time',$('#angleVal').val())">Get All Time For Current Angle</button>
             </div>
-            <div id="frame-slider"></div>
-        </div>
-        <div id="animationSettings">
-            <h4>Animation Settings</h4>
-            <progress value="50" max="100"></progress>
-            <p>
-                Animate from <input type="number" min="0" placeholder="start" id="startFrame"/> to 
-                <input type="number" min="0" placeholder="end" id="endFrame"/>
-                <button class="btn" type="submit" id="loadData">Load Data</button>
-                <button class="btn" type="submit" id="runAnimation">Start</button>
-            </p>
+            <p>Time:</p>
+            <div id="time-slider"></div>
+            <div class="btn-group">
+                <button class="btn" href="#" onclick="moveFrame(0, -1)"><i class="icon-chevron-left"></i></button>
+                <input type="text" id="angleVal" value="0"/>
+                <button class="btn" href="#" onclick="moveFrame(0, 1)"><i class="icon-chevron-right"></i></button>
+                <button id = "restore" class="btn" onclick = "restoreScale()">Fit Graph</button>
+                <button class="btn" onclick = "preloadData('mu',$('#time').val())">Get All Angles For Current Time</button>
+            </div>
+            <p>Angle:</p>
+            <div id="mu-slider"></div>
         </div>
     </div>
     <div id="details">

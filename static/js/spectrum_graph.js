@@ -235,61 +235,44 @@ function runAnimation(start, end, speed){
     if(animation){
         animation = clearInterval(animation);
     }
-    currFrame = start;
     animation = setInterval(getNextFrame, speed);
 }
 
 function getNextFrame(){
-    if(currTime >= animationStart && currTime < animationEnd){
-        moveFrame(1, 0);
-    }else{
-        $("#runAnimation").click();
-    }
+    moveFrame(1, 0);
 }
 
-function preloadData(start, end){
-    animationStart = parseInt(start);
-    animationEnd = parseInt(end);
-    currTime = animationStart;
-    // $("#frame-slider").slider("option", "value", currTime);
+function preloadData(method, step){
     // $(".graph").append("<div id='loadingscreen'><img width='32px' height='32px' src='/static/img/loader.gif'/></div>");
-    // $("#runAnimation").hide();
-    // $("progress").attr("max", end-start);
-    // $("progress").val(0);
-    // $("progress").show();
-
-    for(var x=animationStart; x<animationEnd; x++){
-        if(frameData[x]==undefined){
-            d3.json("/ajax/plot/"+m_id+"/"+x+"/", function(error, data){
-                if (error){
-                    console.log(error);
-                }else{
-                    frameData[data.time_step] = [];
-                    frameData[data.time_step][0] = data.flux_data;
-                }
-                // $("progress").val($("progress").val()+1);
-                // if($("progress").val()==$("progress").attr("max")){
-                //     $("#loadingscreen").remove();
-                //     $("progress").hide();
-                //     $("#runAnimation").show();
-                // }
-            });
+    d3.json("/ajax/"+method+"/"+m_id+"/"+step+"/", function(error, data){
+        if (error){
+            console.log(error);
         }else{
-            // $("progress").val($("progress").val()+1);
-            // if($("progress").val()==$("progress").attr("max")){
-            //     $("#loadingscreen").remove();
-            //     $("progress").hide();
-            //     $("#runAnimation").show();
-            // }
+            for(var index in data){
+                var d = data[index];
+                if(frameData[d.time_step] == undefined){
+                    frameData[d.time_step] = [];
+                }
+                if(frameData[d.time_step][d.mu_step] == undefined){
+                    frameData[d.time_step][d.mu_step] = d.flux_data;
+                }
+            }
         }
-    }
+        // $("#loadingscreen").remove();
+    });
 }
 
 function moveFrame(time, mu){
     currTime+=parseInt(time);
+    if(currTime < 0){
+        currTime = 0;
+    }
     currMu+=parseInt(mu);
-    getData(currTime, currMu);
-    // $("#frame-slider").slider("option", "value", currFrame);
+    if(currMu < 0){
+        currMu = 0;
+    }
+    $("#time-slider").slider("option", "value", currTime);
+    $("#mu-slider").slider("option", "value", currMu);
 }
 
 function getData(time, mu){
