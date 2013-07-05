@@ -184,6 +184,11 @@ function refresh() {
     svg.selectAll(".line")
     .attr("class", "line")
     .attr("d", line);
+    if(zoom.scale() > 10){
+        showCircles();
+    } else{
+        d3.selectAll("circle").remove();
+    }
 }
 
 function restoreScale(){
@@ -200,7 +205,7 @@ function restoreScale(){
 
 function showCircles(){
     var circles = circlesLayer.selectAll("circle")
-    .data(flux_data);
+    .data(frameData[currTime][currMu]);
 
     circles.enter()
     .append("circle")
