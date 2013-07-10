@@ -11,6 +11,12 @@ from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.files import File
+from odetta.settings import FITS_ROOT
+import zipfile
+import glob,os
+import StringIO
+
 #from simple_chi2 import *
 
 
@@ -281,3 +287,22 @@ def plot_few(request,id):
 
 def text(request):
     return HttpResponse('Sample Text')
+
+def get_zip_file(request):
+    string_file = StringIO.StringIO()
+    zipped_file = zipfile.ZipFile(string_file, 'w', compression=zipfile.ZIP_DEFLATED)
+    current_dir = os.getcwd()
+    os.chdir(FITS_ROOT)
+    for content in glob.glob("./*"):
+        zipped_file.write(content)
+    os.chdir(current_dir)
+    zipped_file.close()
+    contents = string_file.getvalue()
+    # slash = FITS_ROOT.rfind("/")
+    # fileName = FITS_ROOT[slash+1:]
+    response = HttpResponse(contents, content_type='application/x-zip-compressed')
+    response['Content-Disposition'] = 'attachment; filename=blarg.zip'
+    return response
+    # zipped_file = zipfile.ZipFile(FITS_ROOT,'w')
+    # for(file in )
+    
