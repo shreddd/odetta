@@ -249,7 +249,7 @@ function getNextFrame(){
 }
 
 function preloadData(method, step){
-    // $(".graph").append("<div id='loadingscreen'><img width='32px' height='32px' src='/static/img/loader.gif'/></div>");
+    $(".graph").append("<div id='loadingscreen'><img width='32px' height='32px' src='/static/img/loader.gif'/></div>");
     d3.json("/ajax/"+method+"/"+m_id+"/"+step+"/", function(error, data){
         if (error){
             console.log(error);
@@ -264,7 +264,7 @@ function preloadData(method, step){
                 }
             }
         }
-        // $("#loadingscreen").remove();
+        $("#loadingscreen").remove();
     });
 }
 

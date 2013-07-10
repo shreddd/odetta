@@ -295,8 +295,6 @@ def get_zip_file(request):
         zipped_file.write(content, os.path.basename(content),zipfile.ZIP_DEFLATED)
     zipped_file.close()
     contents = string_file.getvalue()
-    # slash = FITS_ROOT.rfind("/")
-    # fileName = FITS_ROOT[slash+1:]
     response = HttpResponse(contents, content_type='application/x-zip-compressed')
     response['Content-Disposition'] = 'attachment; filename=blarg.zip'
     return response
