@@ -291,11 +291,8 @@ def text(request):
 def get_zip_file(request):
     string_file = StringIO.StringIO()
     zipped_file = zipfile.ZipFile(string_file, 'w', compression=zipfile.ZIP_DEFLATED)
-    current_dir = os.getcwd()
-    os.chdir(FITS_ROOT)
-    for content in glob.glob("./*"):
-        zipped_file.write(content)
-    os.chdir(current_dir)
+    for content in glob.glob(FITS_ROOT + "/*"):
+        zipped_file.write(content, os.path.basename(content),zipfile.ZIP_DEFLATED)
     zipped_file.close()
     contents = string_file.getvalue()
     # slash = FITS_ROOT.rfind("/")
@@ -303,6 +300,4 @@ def get_zip_file(request):
     response = HttpResponse(contents, content_type='application/x-zip-compressed')
     response['Content-Disposition'] = 'attachment; filename=blarg.zip'
     return response
-    # zipped_file = zipfile.ZipFile(FITS_ROOT,'w')
-    # for(file in )
     
