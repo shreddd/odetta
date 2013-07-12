@@ -327,7 +327,7 @@ function resetMouseListeners(){
                 .attr("opacity",0)
                 .transition()
                 .duration(500)
-                .text("x:" + Math.floor((d.wavelength)))
+                .text("Wavelength:" + Math.floor((d.wavelength)) + " Å")
                 .attr("x",function(){
                     return x(d.wavelength) + 10;
                 })
@@ -343,7 +343,7 @@ function resetMouseListeners(){
                 .attr("opacity",0)
                 .transition()
                 .duration(500)
-                .text("y:" + Math.floor((d.lum)))
+                .text("Luminosity:" + Math.floor((d.lum)) + " lux")
                 .attr("x",function(){
                     return x(d.wavelength) + 10;
                 })
