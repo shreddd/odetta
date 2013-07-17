@@ -19,6 +19,10 @@ class Fluxvals(models.Model):
     wavelength = models.FloatField()
     luminosity = models.FloatField(null=True, blank=True)
     photon_count = models.FloatField(null=True, blank=True)
+    t_expl = models.FloatField(null=True, blank=True)
+    phi = models.FloatField(null=True, blank=True)
+    mu = models.FloatField(null=True, blank=True)
+    model_id = models.IntegerField()
 
     class Meta:
         db_table = 'fluxvals'
@@ -31,9 +35,6 @@ class MetaDd2D(models.Model):
     modelname = models.CharField(max_length=40, blank=True)
     modeltype = models.CharField(max_length=40, blank=True)
     modeldim = models.SmallIntegerField(null=True, blank=True)
-    t_expl = models.FloatField(null=True, blank=True)
-    phi = models.FloatField(null=True, blank=True)
-    mu = models.FloatField(null=True, blank=True)
     mass_wd = models.FloatField(null=True, blank=True)
     percent_carbon = models.FloatField(null=True, blank=True)
     percent_oxygen = models.FloatField(null=True, blank=True)
@@ -63,11 +64,10 @@ class MetaDd2D(models.Model):
 
 
 def get_time_max(model_id):
-    return MetaDd2D.objects.filter(model_id=model_id).values("t_expl").distinct("t_expl").order_by("t_expl").count() - 1
-
+    return Fluxvals.objects.filter(model_id=model_id).values("t_expl").distinct("t_expl").order_by("t_expl").count() - 1
 
 def get_mu_max(model_id):
-    return MetaDd2D.objects.filter(model_id=model_id).values("mu").distinct("mu").order_by("-mu").count() - 1
+    return Fluxvals.objects.filter(model_id=model_id).values("mu").distinct("mu").order_by("-mu").count() - 1
 
 
 class Models(models.Model):
