@@ -1,5 +1,5 @@
 from django.http import HttpResponse, Http404
-from odetta.models import Fluxvals, MetaDd2D, Models, SearchForm, get_mu_max, get_time_max
+from odetta.models import Fluxvals, MetaDd2D, Models, SearchForm, get_mu_max, get_time_max, Spectra
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import pylab as pl
@@ -87,27 +87,27 @@ def plot(request, model_id):
 
 
 def get_plot_data(request, model_id, time_step=0, mu_step=0):
-    fluxvals = Fluxvals.objects.filter(model_id=model_id)
-    if fluxvals.count() <= 0:
+    spectra = Spectra.objects.filter(model_id=model_id)
+    if spectra.count() <= 0:
         raise Http404
 
     try:
-        all_time_steps = fluxvals.values("t_expl").distinct("t_expl").order_by("t_expl")
+        all_time_steps = spectra.values("t_expl").distinct("t_expl").order_by("t_expl")
         t_expl = all_time_steps[int(time_step)]["t_expl"]
     except IndexError:
         return HttpResponse(simplejson.dumps({"success": False, "error": "time_step index out of bounds", "max_time_steps": all_time_steps.count()}), content_type="application/json")
     try:
-        all_mu_steps = fluxvals.filter(t_expl=t_expl).values("mu").order_by("-mu")
+        all_mu_steps = spectra.filter(t_expl=t_expl).values("mu").order_by("-mu")
         mu = all_mu_steps[int(mu_step)]["mu"]
     except IndexError:
         return HttpResponse(simplejson.dumps({"success": False, "error": "mu_step index out of bounds", "max_mu_steps": all_mu_steps.count()}), content_type="application/json")
 
     # Gets the meta data based on the calculated mu and t_expl
     # Uses range to prevent floating point errors
-    meta_data = fluxvals.get(mu__range=(mu-0.01, mu+0.01), t_expl__range=(t_expl-0.01, t_expl+0.01))
+    meta_data = spectra.get(mu__range=(mu-0.01, mu+0.01), t_expl__range=(t_expl-0.01, t_expl+0.01))
 
     # Populates a flux data array from the spec_id of the selected meta_data
-    qset = Fluxvals.objects.filter(spec_id=meta_data.spec_id)
+    qset = Fluxvals.objects.filter(spec_id=meta_data.spec_id).order_by("wavelength")
     flux_data = []
     for rec in qset:
         flux_data.append({
@@ -128,7 +128,7 @@ def get_plot_data(request, model_id, time_step=0, mu_step=0):
 
 
 def batch_time_data(request, model_id, mu_step):
-    model = MetaDd2D.objects.filter(model_id=model_id)
+    model = Spectra.objects.filter(model_id=model_id)
 
     if model.count() <= 0:
         raise Http404
@@ -148,7 +148,7 @@ def batch_time_data(request, model_id, mu_step):
             "mu_step": int(mu_step),
             "flux_data": [],
         })
-        qset = Fluxvals.objects.filter(spec_id=m.spec_id)
+        qset = Fluxvals.objects.filter(spec_id=m.spec_id).order_by("wavelength")
         for rec in qset:
             data[index]['flux_data'].append({
                 "wavelength": rec.wavelength,  # Graph's X-Axis
@@ -159,7 +159,7 @@ def batch_time_data(request, model_id, mu_step):
 
 
 def batch_angle_data(request, model_id, time_step):
-    model = MetaDd2D.objects.filter(model_id=model_id)
+    model = Spectra.objects.filter(model_id=model_id)
 
     if model.count() <= 0:
         raise Http404
@@ -179,7 +179,7 @@ def batch_angle_data(request, model_id, time_step):
             "mu_step": int(index),
             "flux_data": [],
         })
-        qset = Fluxvals.objects.filter(spec_id=m.spec_id)
+        qset = Fluxvals.objects.filter(spec_id=m.spec_id).order_by("wavelength")
         for rec in qset:
             data[index]['flux_data'].append({
                 "wavelength": rec.wavelength,  # Graph's X-Axis

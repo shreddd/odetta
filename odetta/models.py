@@ -13,6 +13,14 @@ class Chi2Test(models.Model):
     class Meta:
         db_table = 'chi2test'
 
+class Spectra(models.Model):
+    model_id = models.IntegerField()
+    spec_id = models.IntegerField(primary_key=True)
+    t_expl= models.FloatField(null=True,blank=True)
+    mu = models.FloatField(null=True,blank=True)
+    phi = models.FloatField(null=True, blank=True)
+    class Meta:
+        db_table = 'spectra'
 
 class Fluxvals(models.Model):
     spec_id = models.IntegerField(primary_key=True)
@@ -64,10 +72,10 @@ class MetaDd2D(models.Model):
 
 
 def get_time_max(model_id):
-    return Fluxvals.objects.filter(model_id=model_id).values("t_expl").distinct("t_expl").order_by("t_expl").count() - 1
+    return Spectra.objects.filter(model_id=model_id).values("t_expl").distinct("t_expl").order_by("t_expl").count() - 1
 
 def get_mu_max(model_id):
-    return Fluxvals.objects.filter(model_id=model_id).values("mu").distinct("mu").order_by("-mu").count() - 1
+    return Spectra.objects.filter(model_id=model_id).values("mu").distinct("mu").order_by("-mu").count() - 1
 
 
 class Models(models.Model):
