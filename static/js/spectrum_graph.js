@@ -83,6 +83,10 @@ svg.append("svg:rect")
 .attr("height", height)
 .attr("class", "plot");
 
+$(document).ready(function(){
+    getData(0,0);
+});
+
 var make_x_axis = function () {
     return d3.svg.axis()
     .scale(x)
