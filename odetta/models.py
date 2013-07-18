@@ -2,6 +2,16 @@ from __future__ import unicode_literals
 from django.db import models
 from django import forms
 
+class Publication(models.Model):
+    modeltype = models.CharField(max_length=40, blank = True)
+    modeldim = models.IntegerField()
+    date_entered = models.DateField()
+    citation = models.CharField(max_length=200, blank=True)
+    sntype = models.CharField(max_length=10, blank = True)
+    pub_id = models.IntegerField()
+
+    class Meta:
+        db_table = 'publication'
 
 class Chi2Test(models.Model):
     fname = models.CharField(max_length=200, blank=True)
@@ -19,6 +29,7 @@ class Spectra(models.Model):
     t_expl= models.FloatField(null=True,blank=True)
     mu = models.FloatField(null=True,blank=True)
     phi = models.FloatField(null=True, blank=True)
+    
     class Meta:
         db_table = 'spectra'
 
