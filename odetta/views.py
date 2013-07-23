@@ -1,5 +1,5 @@
 from django.http import HttpResponse, Http404
-from odetta.models import Fluxvals, MetaDd2D, Models, SearchForm, get_mu_max, get_time_max, Spectra
+from odetta.models import *
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import pylab as pl
@@ -22,6 +22,15 @@ import StringIO
 
 def home_page(request):
     return render_to_response('base.html', context_instance=RequestContext(request))
+
+
+def browse(request, b_type=None):
+    listing = None
+    if b_type:
+        listing = MetaDd2D.objects.all()
+    else:
+        listing = Publication.objects.all()
+    return render_to_response('publication.html', {"listing": listing})
 
 
 def search_models(request):
