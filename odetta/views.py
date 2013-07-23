@@ -190,6 +190,11 @@ def batch_angle_data(request, model_id, time_step):
 
 
 def fitter(request):
+    if request.method == "POST":
+        uploaded_file = request.FILES.get("file")
+        search_option = request.POST.get("fitType")
+        # fit(uploaded_file,search_option)
+        return HttpResponse("File " + uploaded_file.name + " uploaded!")
     return render_to_response("fitter_form.html", context_instance=RequestContext(request))
 
 

@@ -18,6 +18,7 @@
 	<h1>Spectrum Fitter</h1>
 	<div class="span10">
 		<form action"{% url 'odetta.views.fitter' %}" method="post" enctype="multipart/form-data">
+			{% csrf_token %}
 			<div class="form-container">
 				<label for="file_upload">
 					File to fit: <input type="file" id="file_upload" name="file"/>
