@@ -7,7 +7,7 @@ class Publication(models.Model):
     modeldim = models.IntegerField()
     date_entered = models.DateField()
     citation = models.CharField(max_length=200, blank=True)
-    sntype = models.CharField(max_length=10, blank = True)
+    type = models.CharField(max_length=10, blank = True)
     pub_id = models.IntegerField()
 
     class Meta:
@@ -38,9 +38,6 @@ class Fluxvals(models.Model):
     wavelength = models.FloatField()
     luminosity = models.FloatField(null=True, blank=True)
     photon_count = models.FloatField(null=True, blank=True)
-    t_expl = models.FloatField(null=True, blank=True)
-    phi = models.FloatField(null=True, blank=True)
-    mu = models.FloatField(null=True, blank=True)
     model_id = models.IntegerField()
 
     class Meta:
@@ -65,6 +62,7 @@ class MetaDd2D(models.Model):
     rho_min = models.FloatField(null=True, blank=True)
     rho_max = models.FloatField(null=True, blank=True)
     comments = models.CharField(max_length=100, blank=True)
+    pub_id = models.IntegerField()
 
     class Meta:
         db_table = 'meta_dd2d'

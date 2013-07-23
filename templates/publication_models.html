@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <style type="text/css">
+        .result a{
+            font-size: 18px;
+        }
+    </style>
+{% endblock %}
+
+{% block nav %}
+    <li class="nav-header">Models</li>
+    <li><a href="#Model-1">Model 1</a></li>
+    <li><a href="#Model-2">Model 2</a></li>
+    <li><a href="#Model-3">Model 3</a></li>
+    <li><a href="#Model-4">Model 4</a></li>
+    <li><a href="#Model-5">Model 5</a></li>
+    <li><a href="#Model-6">Model 6</a></li>
+    <li><a href="#Model-7">Model 7</a></li>
+    <li><a href="#Model-8">Model 8</a></li>
+    <li><a href="#Model-9">Model 9</a></li>
+    <li><a href="#Model-10">Model 10</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="span12 results">
+        {%for x in "xxxxxxxxxx"%}
+            <div class="result">
+                <a href="/plot/{{forloop.counter}}" id = "Model-{{forloop.counter}}">Example Model {{forloop.counter}}</a>
+                <div class="details">
+                    Model Type: DD, Dimension: 2D, Date Entered: 7/11, SN Type: Sample
+                </div>
+            </div>
+        {% endfor %}
+        <div class="pagination pagination-centered">
+            <ul>
+                <li><a href="?{{q_string}}&page=1">First</a></li>
+                {% if results.has_previous %}
+                <li>
+                    <a href="?{{q_string}}&page={{results.previous_page_number}}">Prev</a>
+                </li>
+                {% else %}
+                <li class="disabled">
+                    <a href="#">Prev</a>
+                </li>
+                {% endif %}
+
+                {% for page in page_range %}
+                    {% if page == results.number %}
+                        <li class="active">
+                            <a href="?{{q_string}}&page={{page}}">{{page}}</a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="?{{q_string}}&page={{page}}">{{page}}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if results.has_next %}
+                <li>
+                    <a href="?{{q_string}}&page={{ results.next_page_number }}">Next</a>
+                 </li>
+                {% else %}
+                <li class="disabled">
+                    <a href="#" class="disabled">Next</a>
+                </li>       
+                {% endif %}
+                <li><a href="?{{q_string}}&page=99999">Last</a></li>
+            </ul>   
+        </div>
+    </div>
+
+{% endblock %}
