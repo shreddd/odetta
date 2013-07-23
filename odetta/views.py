@@ -24,13 +24,61 @@ def home_page(request):
     return render_to_response('base.html', context_instance=RequestContext(request))
 
 
-def browse(request, b_type=None):
-    listing = None
-    if b_type:
-        listing = MetaDd2D.objects.all()
+def browse(request, pub_id=None):
+    listing = []
+    if pub_id:
+        data = MetaDd2D.objects.filter(pub_id=pub_id).order_by("model_id")
+        for model in data:
+            details = ""
+            for field in model._meta.get_all_field_names():
+                if field not in ['modelname']:
+                    details += "%s: %s, " % (field, model.__dict__[field])
+            listing.append({
+                "name": model.modelname,
+                "url": reverse("odetta.views.plot", kwargs={"model_id":model.model_id}),
+                "details": details
+            })
     else:
-        listing = Publication.objects.all()
-    return render_to_response('publication.html', {"listing": listing})
+        data = Publications.objects.all()        
+        for publication in data:
+            details = ""
+            for field_name in publication._meta.get_all_field_names():
+                field = publication._meta.get_field(field_name)
+                if field not in ['modeltype']:
+                    details += "%s: %s, " % (field.verbose_name, publication.__dict__[field_name])
+            listing.append({
+                "name": publication.modeltype,
+                "url": reverse("odetta.views.browse", kwargs={"pub_id": publication.pub_id}),
+                "details": details
+            })
+
+    MAX_ENTRIES = 6
+
+    page = request.GET.get("page", 1)
+    pages = Paginator(listing, MAX_ENTRIES)
+    try:
+        results = pages.page(page)
+    except PageNotAnInteger:
+        results = pages.page(1)
+    except EmptyPage:
+        results = pages.page(pages.num_pages)
+
+    # Creates a range of pages (like on the bottom of google search)
+    page_range = []
+    if results.number <= MAX_ENTRIES/2:
+        page_range = pages.page_range[:MAX_ENTRIES]
+    elif results.number >= pages.page_range[-1]-MAX_ENTRIES/2:
+        page_range = pages.page_range[-MAX_ENTRIES:]
+    else:
+        page_range = range(results.number-4, results.number+5)
+
+    # Creates a querystring without the page number
+    temp = request.GET.copy()
+    if temp.get("page"):
+        temp.pop("page")
+    query_string = temp.urlencode()
+    
+    return render_to_response('list_view.html', {"results": results, "q_string": query_string, "page_range": page_range})
 
 
 def search_models(request):

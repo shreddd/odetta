@@ -3,16 +3,16 @@ from django.db import models
 from django import forms
 
 
-class Publication(models.Model):
-    modeltype = models.CharField(max_length=40, blank = True)
+class Publications(models.Model):
+    modeltype = models.CharField(max_length=40, blank = True, verbose_name='Model Type')
     modeldim = models.IntegerField()
     date_entered = models.DateField()
     citation = models.CharField(max_length=200, blank=True)
     type = models.CharField(max_length=10, blank = True)
-    pub_id = models.IntegerField()
+    pub_id = models.IntegerField(primary_key=True)
 
     class Meta:
-        db_table = 'publication'
+        db_table = 'publications'
 
 class Chi2Test(models.Model):
     fname = models.CharField(max_length=200, blank=True)
