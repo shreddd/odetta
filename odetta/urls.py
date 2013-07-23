@@ -29,6 +29,6 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^browse/$', TemplateView.as_view(template_name="publications.html")),
-    url(r'^browse/models/$', TemplateView.as_view(template_name="publication_models.html")),
+    url(r'^browse/$', browse),
+    url(r'^browse/(?P<b_type>models)/$', browse),
 )
