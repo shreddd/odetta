@@ -30,5 +30,5 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^browse/$', browse),
-    url(r'^browse/(?P<type>models)/$', browse),
+    url(r'^browse/(?P<b_type>models)/$', browse),
 )
