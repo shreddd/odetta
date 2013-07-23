@@ -5,11 +5,11 @@ from django import forms
 
 class Publications(models.Model):
     modeltype = models.CharField(max_length=40, blank = True, verbose_name='Model Type')
-    modeldim = models.IntegerField()
-    date_entered = models.DateField()
-    citation = models.CharField(max_length=200, blank=True)
-    type = models.CharField(max_length=10, blank = True)
-    pub_id = models.IntegerField(primary_key=True)
+    modeldim = models.IntegerField(verbose_name='Model Dimension')
+    date_entered = models.DateField(verbose_name='Date Entered')
+    citation = models.CharField(max_length=200, blank=True, verbose_name='Citation')
+    type = models.CharField(max_length=10, blank = True, verbose_name='Type')
+    pub_id = models.IntegerField(primary_key=True, verbose_name='Publication ID')
 
     class Meta:
         db_table = 'publications'
