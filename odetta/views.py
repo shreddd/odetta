@@ -30,12 +30,13 @@ def browse(request, pub_id=None):
         data = MetaDd2D.objects.filter(pub_id=pub_id).order_by("model_id")
         for model in data:
             details = ""
-            for field in model._meta.get_all_field_names():
-                if field not in ['modelname']:
-                    details += "%s: %s, " % (field, model.__dict__[field])
+            for field_name in model._meta.get_all_field_names():
+                field = model._meta.get_field(field_name)
+                if field_name not in ['modelname']:
+                    details += "%s: %s; " % (field.verbose_name, model.__dict__[field_name])
             listing.append({
                 "name": model.modelname,
-                "url": reverse("odetta.views.plot", kwargs={"model_id":model.model_id}),
+                "url": reverse("odetta.views.plot", kwargs={"model_id": model.model_id}),
                 "details": details
             })
     else:
@@ -44,8 +45,8 @@ def browse(request, pub_id=None):
             details = ""
             for field_name in publication._meta.get_all_field_names():
                 field = publication._meta.get_field(field_name)
-                if field not in ['modeltype']:
-                    details += "%s: %s, " % (field.verbose_name, publication.__dict__[field_name])
+                if field_name not in ['modeltype']:
+                    details += "%s: %s; " % (field.verbose_name, publication.__dict__[field_name])
             listing.append({
                 "name": publication.modeltype,
                 "url": reverse("odetta.views.browse", kwargs={"pub_id": publication.pub_id}),
