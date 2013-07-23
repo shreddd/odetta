@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django import forms
 
+
 class Publication(models.Model):
     modeltype = models.CharField(max_length=40, blank = True)
     modeldim = models.IntegerField()
@@ -45,12 +46,9 @@ class Fluxvals(models.Model):
 
 
 class MetaDd2D(models.Model):
-    spec_id = models.BigIntegerField(primary_key=True)
-    model_id = models.IntegerField()
-    m_type_id = models.IntegerField()
+    model_id = models.IntegerField(primary_key=True)
+    pub_id = models.IntegerField()
     modelname = models.CharField(max_length=40, blank=True)
-    modeltype = models.CharField(max_length=40, blank=True)
-    modeldim = models.SmallIntegerField(null=True, blank=True)
     mass_wd = models.FloatField(null=True, blank=True)
     percent_carbon = models.FloatField(null=True, blank=True)
     percent_oxygen = models.FloatField(null=True, blank=True)
@@ -61,8 +59,6 @@ class MetaDd2D(models.Model):
     ka_min = models.FloatField(null=True, blank=True)
     rho_min = models.FloatField(null=True, blank=True)
     rho_max = models.FloatField(null=True, blank=True)
-    comments = models.CharField(max_length=100, blank=True)
-    pub_id = models.IntegerField()
 
     class Meta:
         db_table = 'meta_dd2d'
