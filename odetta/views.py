@@ -91,55 +91,55 @@ def browse(request, pub_id=None):
     
     return render_to_response('list_view.html', {"results": results, "q_string": query_string, "page_range": page_range, "breadcrumbs": breadcrumbs})
 
+# search model view that has been replaced by browse
+# def search_models(request):
+#     search_form = SearchForm()
+#     results = []
+#     MAX_ENTRIES = 10
+#     if request.method == "GET" and len(request.GET):
+#         search_form = SearchForm(data=request.GET)
+#         if search_form.is_valid():
+#             # Shows the detailed page if m_id is inputed
+#             if search_form.cleaned_data['model_id']:
+#                 return redirect(plot, search_form.cleaned_data["model_id"])
 
-def search_models(request):
-    search_form = SearchForm()
-    results = []
-    MAX_ENTRIES = 10
-    if request.method == "GET" and len(request.GET):
-        search_form = SearchForm(data=request.GET)
-        if search_form.is_valid():
-            # Shows the detailed page if m_id is inputed
-            if search_form.cleaned_data['model_id']:
-                return redirect(plot, search_form.cleaned_data["model_id"])
+#             # Searches for metadata matching the criteria
+#             search_query = {}
+#             for field in request.GET:
+#                 if request.GET.get(field) and field != "page":
+#                     search_query[field] = request.GET.get(field)
 
-            # Searches for metadata matching the criteria
-            search_query = {}
-            for field in request.GET:
-                if request.GET.get(field) and field != "page":
-                    search_query[field] = request.GET.get(field)
+#             # Deals with paging of search results
+#             page = request.GET.get("page", 1)
+#             matched_models = Models.objects.filter(**search_query).order_by("m_type_id")
+#             result_list = MetaDd2D.objects.none()
+#             for model in matched_models:
+#                 result_list = result_list | MetaDd2D.objects.filter(m_type_id=model.m_type_id).order_by("model_id").distinct("model_id")
+#             pages = Paginator(result_list, MAX_ENTRIES)
+#             try:
+#                 results = pages.page(page)
+#             except PageNotAnInteger:
+#                 results = pages.page(1)
+#             except EmptyPage:
+#                 results = pages.page(pages.num_pages)
 
-            # Deals with paging of search results
-            page = request.GET.get("page", 1)
-            matched_models = Models.objects.filter(**search_query).order_by("m_type_id")
-            result_list = MetaDd2D.objects.none()
-            for model in matched_models:
-                result_list = result_list | MetaDd2D.objects.filter(m_type_id=model.m_type_id).order_by("model_id").distinct("model_id")
-            pages = Paginator(result_list, MAX_ENTRIES)
-            try:
-                results = pages.page(page)
-            except PageNotAnInteger:
-                results = pages.page(1)
-            except EmptyPage:
-                results = pages.page(pages.num_pages)
+#             # Creates a range of pages (like on the bottom of google search)
+#             page_range = []
+#             if results.number <= MAX_ENTRIES/2:
+#                 page_range = pages.page_range[:MAX_ENTRIES]
+#             elif results.number >= pages.page_range[-1]-MAX_ENTRIES/2:
+#                 page_range = pages.page_range[-MAX_ENTRIES:]
+#             else:
+#                 page_range = range(results.number-4, results.number+5)
 
-            # Creates a range of pages (like on the bottom of google search)
-            page_range = []
-            if results.number <= MAX_ENTRIES/2:
-                page_range = pages.page_range[:MAX_ENTRIES]
-            elif results.number >= pages.page_range[-1]-MAX_ENTRIES/2:
-                page_range = pages.page_range[-MAX_ENTRIES:]
-            else:
-                page_range = range(results.number-4, results.number+5)
+#             # Creates a querystring without the page number
+#             temp = request.GET.copy()
+#             if temp.get("page"):
+#                 temp.pop("page")
+#             query_string = temp.urlencode()
 
-            # Creates a querystring without the page number
-            temp = request.GET.copy()
-            if temp.get("page"):
-                temp.pop("page")
-            query_string = temp.urlencode()
-
-            return render_to_response('search.html', {"form": search_form, "results": results, "page_range": page_range, "q_string": query_string}, context_instance=RequestContext(request))
-    return render_to_response('search.html', {"form": search_form}, context_instance=RequestContext(request))
+#             return render_to_response('search.html', {"form": search_form, "results": results, "page_range": page_range, "q_string": query_string}, context_instance=RequestContext(request))
+#     return render_to_response('search.html', {"form": search_form}, context_instance=RequestContext(request))
 
 
 def plot(request, model_id):
