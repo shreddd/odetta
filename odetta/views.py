@@ -179,8 +179,8 @@ def get_plot_data(request, model_id, time_step=0, mu_step=0):
     flux_data = []
     for rec in qset:
         flux_data.append({
-            "wavelength": rec.wavelength,  # Graph's X-Axis
-            "lum": rec.luminosity,  # Graph's Y-Axis
+            "x": rec.wavelength,  # Graph's X-Axis
+            "y": rec.luminosity,  # Graph's Y-Axis
         })
     data = {
         "model_id": int(meta_data.model_id),
@@ -219,8 +219,8 @@ def batch_time_data(request, model_id, mu_step):
         qset = Fluxvals.objects.filter(spec_id=m.spec_id).order_by("wavelength")
         for rec in qset:
             data[index]['flux_data'].append({
-                "wavelength": rec.wavelength,  # Graph's X-Axis
-                "lum": rec.luminosity,  # Graph's Y-Axis
+                "x": rec.wavelength,  # Graph's X-Axis
+                "y": rec.luminosity,  # Graph's Y-Axis
             })
         index += 1
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
@@ -250,8 +250,8 @@ def batch_angle_data(request, model_id, time_step):
         qset = Fluxvals.objects.filter(spec_id=m.spec_id).order_by("wavelength")
         for rec in qset:
             data[index]['flux_data'].append({
-                "wavelength": rec.wavelength,  # Graph's X-Axis
-                "lum": rec.luminosity,  # Graph's Y-Axis
+                "x": rec.wavelength,  # Graph's X-Axis
+                "y": rec.luminosity,  # Graph's Y-Axis
             })
         index += 1
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
@@ -294,7 +294,7 @@ def run_all_data(request, x2, y2, y2var):
 
 
 def plot_img(request, model_id, time_step=0, mu_step=0):
-    model = MetaDd2D.objects.filter(model_id=model_id)
+    model = Spectra.objects.filter(model_id=model_id)
     if model.count() <= 0:
         raise Http404
 
@@ -311,9 +311,10 @@ def plot_img(request, model_id, time_step=0, mu_step=0):
     meta_data = model.get(mu__range=(mu-0.01, mu+0.01), t_expl__range=(t_expl-0.01, t_expl+0.01))
 
     # Populates a flux data array from the spec_id of the selected meta_data
-    qset = Fluxvals.objects.filter(spec_id=meta_data.spec_id)
+    qset = Fluxvals.objects.filter(spec_id=meta_data.spec_id).order_by("wavelength")
     wave = [rec.wavelength for rec in qset]
     lum = [rec.luminosity for rec in qset]
+    spec_id = meta_data.spec_id
     ttle = 'Model '+str(spec_id)
     xl = 'Wavelength (A)'
     yl = 'Luminosity'

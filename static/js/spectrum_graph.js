@@ -17,10 +17,10 @@ var y = d3.scale.linear()
 
 var line = d3.svg.line()
     .x(function (d) {
-        return x(d.wavelength);
+        return x(d.x);
     })
     .y(function (d) {
-        return y(d.lum);
+        return y(d.y);
     });
 
 var zoom = d3.behavior.zoom()
@@ -198,11 +198,11 @@ function refresh() {
 
 function restoreScale(){
     zoom.x(x.domain(d3.extent(frameData[currTime][currMu], function (d) {
-        return d.wavelength;
+        return d.x;
     }))
     .range([0, width]))
     .y(y.domain(d3.extent(frameData[currTime][currMu], function (d) {
-        return d.lum;
+        return d.y;
     }))
     .range([height, 0]));
     refresh();
@@ -219,17 +219,17 @@ function showCircles(){
     .attr("stroke-width","1px")
     .attr("fill","teal")
     .attr("cx",function(d){
-        return x(d.wavelength);
+        return x(d.x);
     })
     .attr("cy",function(d){
-        return y(d.lum);
+        return y(d.y);
     });
 
     circles.attr("cx",function(d){
-        return x(d.wavelength);
+        return x(d.x);
     })
     .attr("cy",function(d){
-        return y(d.lum);
+        return y(d.y);
     });
 }
 
@@ -331,12 +331,12 @@ function resetMouseListeners(){
                 .attr("opacity",0)
                 .transition()
                 .duration(500)
-                .text("Wavelength:" + Math.floor((d.wavelength)) + " Å")
+                .text("Wavelength:" + Math.floor((d.x)) + " Å")
                 .attr("x",function(){
-                    return x(d.wavelength) + 10;
+                    return x(d.x) + 10;
                 })
                 .attr("y", function(){
-                    return y(d.lum) + 5;
+                    return y(d.y) + 5;
                 })
                 .attr("fill","black")
                 .attr("font-family","sans-serif")
@@ -347,12 +347,12 @@ function resetMouseListeners(){
                 .attr("opacity",0)
                 .transition()
                 .duration(500)
-                .text("Luminosity:" + Math.floor((d.lum)) + " lux")
+                .text("Luminosity:" + Math.floor((d.y)) + " lux")
                 .attr("x",function(){
-                    return x(d.wavelength) + 10;
+                    return x(d.x) + 10;
                 })
                 .attr("y", function(){
-                    return y(d.lum) + 25;
+                    return y(d.y) + 25;
                 })
                 .attr("fill","black")
                 .attr("font-family","sans-serif")

@@ -80,6 +80,7 @@
             change: function(event, ui){
                 getData(ui.value, currMu);
                 $("#time").val(ui.value);
+                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#time").val() + "/" + $("#angleVal").val() + "/img/?download=1");
             }
         });
         $( "#mu-slider" ).slider({
@@ -93,10 +94,13 @@
             change: function(event, ui){
                 getData(currTime, ui.value);
                 $("#angleVal").val(ui.value);
+                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#time").val() + "/" + $("#angleVal").val() + "/img/?download=1");
             }
         });
         $("#time").change(function(){
+            console.log("{{meta_data.model_id}}");
             $("#time-slider").slider("option", "value", $(this).val().replace(/[a-zA-Z]/g, ""));
+            
         });
         $("#angleVal").change(function(){
             $("#mu-slider").slider("option", "value", $(this).val().replace(/[a-zA-Z]/g, ""));
@@ -113,8 +117,9 @@
             <li class="nav-header">Index</li>
             <li><a href="#graph">Graph</a></li>
             <li><a href="#details">Details</a></li>
-            <li><a href="{% url 'odetta.views.plot_img' model_id=meta_data.model_id time_step=0 mu_step=0%}?download=1">Download Image</a></li>
+            <li><a id = "image_download" href="{% url 'odetta.views.plot_img' model_id=meta_data.model_id time_step=0 mu_step=0%}?download=1">Download Image</a></li>
             <li><a href="{% url 'odetta.views.get_zip_file' %}">Download Model</a></li>
+            <li><a href="#">Upload File</a></li>
         </ul> 
     </div>
 </div>
