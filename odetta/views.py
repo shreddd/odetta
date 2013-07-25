@@ -26,26 +26,35 @@ def home_page(request):
 
 def browse(request, pub_id=None):
     listing = []
+    breadcrumbs = [{"name": "Publications", "url": reverse("odetta.views.browse")}]
+
     if pub_id:
+        breadcrumbs.append({
+            "name": Publications.objects.get(pub_id=pub_id).modeltype,
+            "url": reverse("odetta.views.browse", kwargs={"pub_id": pub_id}),
+            "active": True,
+        })
         data = MetaDd2D.objects.filter(pub_id=pub_id).order_by("model_id")
         for model in data:
             details = ""
-            for field in model._meta.get_all_field_names():
-                if field not in ['modelname']:
-                    details += "%s: %s, " % (field, model.__dict__[field])
+            for field_name in model._meta.get_all_field_names():
+                field = model._meta.get_field(field_name)
+                if field_name not in ['modelname']:
+                    details += "%s: %s; " % (field.verbose_name, model.__dict__[field_name])
             listing.append({
                 "name": model.modelname,
-                "url": reverse("odetta.views.plot", kwargs={"model_id":model.model_id}),
+                "url": reverse("odetta.views.plot", kwargs={"model_id": model.model_id}),
                 "details": details
             })
     else:
+        breadcrumbs = [{"name": "Publications", "url": reverse("odetta.views.browse"), "active": True}]
         data = Publications.objects.all()        
         for publication in data:
             details = ""
             for field_name in publication._meta.get_all_field_names():
                 field = publication._meta.get_field(field_name)
-                if field not in ['modeltype']:
-                    details += "%s: %s, " % (field.verbose_name, publication.__dict__[field_name])
+                if field_name not in ['modeltype']:
+                    details += "%s: %s; " % (field.verbose_name, publication.__dict__[field_name])
             listing.append({
                 "name": publication.modeltype,
                 "url": reverse("odetta.views.browse", kwargs={"pub_id": publication.pub_id}),
@@ -77,8 +86,10 @@ def browse(request, pub_id=None):
     if temp.get("page"):
         temp.pop("page")
     query_string = temp.urlencode()
+
+
     
-    return render_to_response('list_view.html', {"results": results, "q_string": query_string, "page_range": page_range})
+    return render_to_response('list_view.html', {"results": results, "q_string": query_string, "page_range": page_range, "breadcrumbs": breadcrumbs})
 
 
 def search_models(request):
