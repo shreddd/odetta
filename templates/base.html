@@ -26,6 +26,23 @@
             scrolling = clearInterval(scrolling);
             count = 0;
         });
+        $("#popupbox").dialog({
+            autoOpen: false,
+            width:450,
+            position: {my:"top", at:"top", of:$("#content")},
+        });
+        $(".popup").click(function(e){
+            e.preventDefault();
+            $("#popupbox").load($(this).attr("href"), function(){
+                $("#popupbox").dialog("open");   
+                $(".closedialog").click(function(e){
+                    e.preventDefault();
+                    $("#popupbox").dialog("close");
+                    return false;
+                }); 
+            });
+            return false;
+        }); 
     });
     function scrollBG(){
         scrolling = clearInterval(scrolling);
@@ -68,7 +85,7 @@
             {% endblock %}
         </div>
     </header>
-    <div class="container">
+    <div class="container" id = "content">
         <div class="row-fluid">
             {% block content %}
                 <div class="span10 offset1">
@@ -84,6 +101,8 @@
                 </div>
             {% endblock content %}
         </div>
+    </div>
+    <div id = "popupbox">
     </div>
 </body>
 </html>

@@ -316,7 +316,7 @@ def plot_img(request, model_id, time_step=0, mu_step=0):
     lum = [rec.luminosity for rec in qset]
     spec_id = meta_data.spec_id
     ttle = 'Model '+str(spec_id)
-    xl = 'Wavelength (Å)'
+    xl = 'Wavelength (A)'
     yl = 'Luminosity'
 
     fig = Figure()
@@ -369,3 +369,5 @@ def get_zip_file(request):
     response['Content-Disposition'] = 'attachment; filename=blarg.zip'
     return response
     
+def upload(request):
+    return render_to_response("upload.html", context_instance=RequestContext(request))
