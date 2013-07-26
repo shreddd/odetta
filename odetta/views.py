@@ -262,7 +262,7 @@ def fitter(request):
         uploaded_file = request.FILES.get("file")
         search_option = request.POST.get("fitType")
         # fit(uploaded_file,search_option)
-        return HttpResponse("File " + uploaded_file.name + " uploaded!")
+        return render_to_response("fitter_results.html", context_instance=RequestContext(request))
     return render_to_response("fitter_form.html", context_instance=RequestContext(request))
 
 
@@ -316,7 +316,7 @@ def plot_img(request, model_id, time_step=0, mu_step=0):
     lum = [rec.luminosity for rec in qset]
     spec_id = meta_data.spec_id
     ttle = 'Model '+str(spec_id)
-    xl = 'Wavelength (A)'
+    xl = 'Wavelength (Å)'
     yl = 'Luminosity'
 
     fig = Figure()

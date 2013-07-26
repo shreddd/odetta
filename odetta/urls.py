@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     # url(r'^search/$', search_models),
     url(r'^about/$', about),
     url(r'^fitter/$', fitter),
+    url(r'^fitter/results/$',fitter),
     url(r'^download/$',get_zip_file),
     # Examples:
     #url(r'^$', 'odetta.views.home', name='home'),
