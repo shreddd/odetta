@@ -75,13 +75,18 @@ class MetaDd2D(models.Model):
     def citation(self):
         return Models.objects.values("citation").get(m_type_id=self.m_type_id)['citation']
 
+    def has_mu(self):
+        return Spectra.objects.filter(model_id=self.model_id).distinct("mu").count() > 1
+
+    def has_phi(self):
+        return Spectra.objects.filter(model_id=self.model_id).distinct("phi").count() > 1
+
 
 def get_time_max(model_id):
     return Spectra.objects.filter(model_id=model_id).values("t_expl").distinct("t_expl").order_by("t_expl").count() - 1
 
 def get_mu_max(model_id):
     return Spectra.objects.filter(model_id=model_id).values("mu").distinct("mu").order_by("-mu").count() - 1
-
 
 class Models(models.Model):
     modeltype = models.CharField(max_length=40, blank=True)

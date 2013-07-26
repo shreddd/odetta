@@ -172,10 +172,10 @@ def get_plot_data(request, model_id, time_step=0, mu_step=0):
 
     # Gets the meta data based on the calculated mu and t_expl
     # Uses range to prevent floating point errors
-    meta_data = spectra.get(mu__range=(mu-0.01, mu+0.01), t_expl__range=(t_expl-0.01, t_expl+0.01))
+    spec_data = spectra.get(mu__range=(mu-0.01, mu+0.01), t_expl__range=(t_expl-0.01, t_expl+0.01))
 
     # Populates a flux data array from the spec_id of the selected meta_data
-    qset = Fluxvals.objects.filter(spec_id=meta_data.spec_id).order_by("wavelength")
+    qset = Fluxvals.objects.filter(spec_id=spec_data.spec_id).order_by("wavelength")
     flux_data = []
     for rec in qset:
         flux_data.append({
@@ -183,7 +183,7 @@ def get_plot_data(request, model_id, time_step=0, mu_step=0):
             "y": rec.luminosity,  # Graph's Y-Axis
         })
     data = {
-        "model_id": int(meta_data.model_id),
+        "model_id": int(spec_data.model_id),
         "time_step": int(time_step),
         "t_expl": float(t_expl),
         "max_time_steps": all_time_steps.count()-1,

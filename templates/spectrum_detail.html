@@ -98,7 +98,6 @@
             }
         });
         $("#time").change(function(){
-            console.log("{{meta_data.model_id}}");
             $("#time-slider").slider("option", "value", $(this).val().replace(/[a-zA-Z]/g, ""));
             
         });
@@ -132,6 +131,7 @@
     <div id = "options" class="well">
         <div id="graphOptions">
             <h4>Graph Options</h4>
+
             <div class="btn-group">
                 <button class="btn" href="#" onclick="moveFrame(-1, 0)"><i class="icon-chevron-left"></i></button>
                 <input type="text" id="time" value="0"/>
@@ -141,15 +141,28 @@
             </div>
             <p>Time:</p>
             <div id="time-slider"></div>
-            <div class="btn-group">
-                <button class="btn" href="#" onclick="moveFrame(0, -1)"><i class="icon-chevron-left"></i></button>
-                <input type="text" id="angleVal" value="0"/>
-                <button class="btn" href="#" onclick="moveFrame(0, 1)"><i class="icon-chevron-right"></i></button>
-                <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
-                <button class="btn" onclick = "preloadData('mu',$('#time').val())">Get All Angles For Current Time</button>
-            </div>
-            <p>Angle:</p>
-            <div id="mu-slider"></div>
+            {% if meta_data.has_mu %}
+                <div class="btn-group">
+                    <button class="btn" href="#" onclick="moveFrame(0, -1)"><i class="icon-chevron-left"></i></button>
+                    <input type="text" id="angleVal" value="0"/>
+                    <button class="btn" href="#" onclick="moveFrame(0, 1)"><i class="icon-chevron-right"></i></button>
+                    <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
+                    <button class="btn" onclick = "preloadData('mu',$('#time').val())">Get All Angles For Current Time</button>
+                </div>
+                <p>Angle:</p>
+                <div id="mu-slider"></div>
+            {% endif %}
+            {% if meta_data.has_phi %}
+                <div class="btn-group">
+                    <button class="btn" href="#" onclick="moveFrame(0, -1)"><i class="icon-chevron-left"></i></button>
+                    <input type="text" id="phi" value="0"/>
+                    <button class="btn" href="#" onclick="moveFrame(0, 1)"><i class="icon-chevron-right"></i></button>
+                    <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
+                    <button class="btn" onclick = "preloadData('phi',$('#time').val())">Get All Angles For Current Time</button>
+                </div>
+                <p>Angle:</p>
+                <div id="phi-slider"></div>
+            {% endif %}
         </div>
     </div>
     <div id="details">
