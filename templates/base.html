@@ -87,6 +87,21 @@
     </header>
     <div class="container" id = "content">
         <div class="row-fluid">
+            {% if breadcrumbs %}                
+                <div class="row-fluid">
+                    <div class="span12">
+                        <ul class="breadcrumb">
+                            {% for crumb in breadcrumbs %}
+                                {% if crumb.active %}
+                                    <li class="active">{{crumb.name}}</li>
+                                {% else %}
+                                    <li><a href="{{crumb.url}}">{{crumb.name}}</a><span class="divider">/</span></li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
             {% block content %}
                 <div class="span10 offset1">
                     <h1>Sample Heading</h1>

@@ -146,6 +146,16 @@ def browse(request, pub_id=None):
 
 def plot(request, model_id):
     meta_data = MetaDd2D.objects.filter(model_id = model_id)[0]
+    breadcrumbs = [{"name": "Publications", "url": reverse("odetta.views.browse")}]
+    breadcrumbs.append({
+        "name": Publications.objects.get(pub_id=meta_data.pub_id).shortname,
+        "url": reverse("odetta.views.browse", kwargs={"pub_id": meta_data.pub_id}),
+    })
+    breadcrumbs.append({
+        "name": meta_data.modelname,
+        "url": reverse("odetta.views.plot", kwargs={"model_id": meta_data.model_id}),
+        "active": True
+    })
 
     # Creates a detail array for display on table below graph
     # Excludes the fields in the excludes array
