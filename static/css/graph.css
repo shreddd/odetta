@@ -24,6 +24,11 @@
     stroke: steelblue;
     stroke-width: 1.5px;
 }
+.overplot {
+    fill:none;
+    stroke:green;
+    stroke-width:1.5px;
+}
 .zoom{
     fill:rgba(175,175,175,0.25);
     stroke:black;

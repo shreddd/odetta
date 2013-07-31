@@ -10,6 +10,9 @@ class Publications(models.Model):
     citation = models.CharField(max_length=200, blank=True, verbose_name='Citation')
     type = models.CharField(max_length=10, blank = True, verbose_name='Type')
     pub_id = models.IntegerField(primary_key=True, verbose_name='Publication ID')
+    fullname = models.CharField(max_length=200,blank=True)
+    shortname = models.CharField(max_length=200,blank=True)
+    is_public = models.BooleanField()
 
     class Meta:
         db_table = 'publications'
