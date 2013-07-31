@@ -13,19 +13,6 @@
 
 {% block content %}
 <div class = "span10 offset1">
-    <div class="row-fluid">
-        <div class="span12">
-            <ul class="breadcrumb">
-                {% for crumb in breadcrumbs %}
-                    {% if crumb.active %}
-                        <li class="active">{{crumb.name}}</li>
-                    {% else %}
-                        <li><a href="{{crumb.url}}">{{crumb.name}}</a><span class="divider"></span></li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
     <div class="row-fluid">        
         <div class="span12 results">
             {%for x in results%}
