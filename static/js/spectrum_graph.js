@@ -199,6 +199,9 @@ function refresh() {
     svg.selectAll(".line")
     .attr("class", "line")
     .attr("d", line);
+    svg.selectAll(".overplot")
+    .attr("class", "overplot")
+    .attr("d", line);
     if(zoom.scale() > 10){
         showCircles();
         resetMouseListeners();
