@@ -20,19 +20,23 @@
 {% endblock head %}
 
 {% block content %}
+<div class = "span10 offset3">
 	<h1>Spectra Search</h1>
 	<form action="/search/" method="get" class="form-horizontal">
-			{% for field in form %}
 			<div class="control-group">
-				<label class="control-label" for="id_{{field.html_name}}">{{field.label}}</label>
-				<div class="controls">
-					{{field}}
-				</div>
+				<p>
+					<label class="control-label" for="id_minmass">Minimum Mass: </label>
+					<input class="fields" id="minmass" name = "minmass" placeholder = "Leave blank for no min">
+				</p>
+				<p>
+					<label class="control-label" for="id_maxmass">Maximum Mass: </label>
+					<input class="fields" id="maxmass" name = "maxmass" placeholder = "Leave blank for no max">
+				</p>
+				<p>
+					<label class="control-label" for="id_maxlum">Peak Luminosity: </label>
+					<input class="fields" id="peaklum" name = "peaklum">
+				</p>
 			</div>
-				{% if forloop.first %}
-					<hr/>
-				{% endif %}
-			{% endfor %}
 			<div class="control-group">
 				<div class="controls">
 					<input class="btn" type="submit" value="Search" />					
@@ -44,11 +48,11 @@
 	<div class="span12 results">
 		{% for result in results %}
 			<div class="result">
-				<a href="{% url 'odetta.views.plot' result.model_id %}">Entry {{result.model_id}}: {{result.modelname}}</a>
-				<small><a href="/plot/{{result.model_id}}/img/">img</a></small>
+				<a href="{% url 'odetta.views.plot' result.model.model_id %}">{{result.model.modelname}}</a>
+				<small><a href="/plot/{{result.model.model_id}}/img/">img</a></small>
 				<div class="details">
-					<strong>{{result.citation}}</strong><br/>
-					Model Type: {{result.modeltype}}, Dimension: {{result.modeldim}}D, Date Entered: {{result.date_entered}}, SN Type: {{result.sntype}}
+					<strong>Publication: {{result.pub.fullname}}</strong><br/>
+					Model Name: {{result.model.modelname}}, Mass: {{result.model.mass_wd}}
 				</div>
 			</div>
 		{% endfor %}
@@ -91,4 +95,5 @@
 		</div>
 	</div>
 	{% endif %}
+</div>
 {% endblock content %}
