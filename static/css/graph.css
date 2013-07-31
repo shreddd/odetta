@@ -29,10 +29,25 @@
     stroke:green;
     stroke-width:1.5px;
 }
+#oplotbox{
+    fill:green;
+    stroke:black;
+}
+#linebox{
+    fill:steelblue;
+    stroke:black;
+}
 .zoom{
     fill:rgba(175,175,175,0.25);
     stroke:black;
 }
 .labels{
     font-size: 16px;
+}
+#legend{
+    fill:lightgray;
+    stroke:black;
+}
+.legendtext{
+    font-size:14px;
 }

@@ -163,6 +163,42 @@ svg.append("text")
 .attr("transform","rotate(-90)")
 .text("Luminosity (lux)")
 
+svg.append("rect")
+.attr("id","legend")
+.attr("width",155)
+.attr("height",70)
+.attr("x",width - 175)
+.attr("y",25)
+
+svg.append("rect")
+.attr("width",15)
+.attr("height",15)
+.attr("x",width - 165)
+.attr("y",35)
+.attr("id","oplotbox")
+.on("mousedown",hideShow(".overplot"))
+
+svg.append("text")
+.attr("x",width - 145)
+.attr("y",47)
+.text("Overplotted Graph")
+.attr("class", "legendtext")
+
+svg.append("rect")
+.attr("width",15)
+.attr("height",15)
+.attr("x",width - 165)
+.attr("y",65)
+.attr("id","linebox")
+.on("mousedown",hideShow(".line"))
+
+svg.append("text")
+.attr("x",width - 145)
+.attr("y",77)
+.text("Simulated Graph")
+.attr("class", "legendtext")
+
+
 function graphData(data){
     if(clearData){
         chartBody.selectAll(".line").remove();         
@@ -385,4 +421,12 @@ function resetMouseListeners(){
                 .duration(250)
                 .remove();
         });
+}
+function hideShow(selector){
+    if($(selector).attr("display") != 'none'){
+        $(selector).attr("display","none");
+    }
+    else{
+        $(selector).attr("display","inline");
+    }
 }
