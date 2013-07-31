@@ -32,7 +32,7 @@ def browse(request, pub_id=None):
 
     if pub_id:
         breadcrumbs.append({
-            "name": Publications.objects.get(pub_id=pub_id).modeltype,
+            "name": Publications.objects.get(pub_id=pub_id).shortname,
             "url": reverse("odetta.views.browse", kwargs={"pub_id": pub_id}),
             "active": True,
         })
@@ -58,7 +58,7 @@ def browse(request, pub_id=None):
                 if field_name not in ['modeltype']:
                     details += "%s: %s; " % (field.verbose_name, publication.__dict__[field_name])
             listing.append({
-                "name": publication.modeltype,
+                "name": publication.fullname,
                 "url": reverse("odetta.views.browse", kwargs={"pub_id": publication.pub_id}),
                 "details": details
             })
