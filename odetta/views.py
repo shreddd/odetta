@@ -16,6 +16,7 @@ from odetta.settings import FITS_ROOT
 import zipfile
 import glob,os
 import StringIO
+import numpy as np
 
 #from simple_chi2 import *
 
@@ -356,7 +357,7 @@ def plot_few(request,id):
 
 
 def text(request):
-    return HttpResponse('Sample Text')
+    return HttpResponse(simplejson.dumps({"foo":"bar","test":True}), content_type = "application/json")
 
 def get_zip_file(request):
     string_file = StringIO.StringIO()
@@ -371,3 +372,6 @@ def get_zip_file(request):
     
 def upload(request):
     return render_to_response("upload.html", context_instance=RequestContext(request))
+
+
+
