@@ -370,8 +370,8 @@ def get_zip_file(request):
     response['Content-Disposition'] = 'attachment; filename=blarg.zip'
     return response
     
-def upload(request):
-    return render_to_response("upload.html", context_instance=RequestContext(request))
+def upload(request, model_id):
+    return render_to_response("upload.html", {"model_id":model_id}, context_instance=RequestContext(request))
 
 
 

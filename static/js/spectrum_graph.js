@@ -174,6 +174,17 @@ function graphData(data){
     refresh();         
 }
 
+function graphOverplot(data){
+    if(clearData){
+        chartBody.selectAll(".overplot").remove();         
+    }
+    chartBody.append("svg:path")
+    .datum(data)
+    .attr("class", "overplot")
+    .attr("d", line);   
+    refresh();         
+}
+
 function refresh() {
     svg.select(".x.axis").call(xAxis);
     svg.select(".y.axis").call(yAxis);
