@@ -2,7 +2,7 @@ import numpy as np
 
 
 #the following is for overplotting
-def oplot_process(file, model_id, redshift=1.0,filter=False):
+def oplot_process(file, model_id, redshift=1.0,filter=False, const=0):
     '''We need the scaling model_id in order to find the best scaling'''
     # For fake data:
     from odetta.models import Fluxvals, Spectra
@@ -32,8 +32,7 @@ def oplot_process(file, model_id, redshift=1.0,filter=False):
     #    spec_arr = filterfunc(spec_arr,args)
 
     #scale spectrum to 100% of the maximum fluxval in the model spectra
-    maxflux=get_model_max(model_id)
-    spec_out = maxflux/max(spec_arr)*spec_arr + maxflux*2
+    spec_out = flux*[max(model)/max(flux)]+const
     wave_out = wave_arr/(1+redshift)
     return wave_out, spec_out
  
