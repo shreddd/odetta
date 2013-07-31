@@ -162,7 +162,7 @@ def plot(request, model_id):
     details = []
     for field in meta_data._meta.get_all_field_names():
         details.append((meta_data._meta.get_field(field).verbose_name, getattr(meta_data, field.__str__())))
-    return render_to_response("spectrum_detail.html", {"details": details, "meta_data": meta_data, "mu_max": get_mu_max(model_id), "time_max": get_time_max(model_id)}, context_instance=RequestContext(request))
+    return render_to_response("spectrum_detail.html", {"breadcrumbs":breadcrumbs, "details": details, "meta_data": meta_data, "mu_max": get_mu_max(model_id), "time_max": get_time_max(model_id)}, context_instance=RequestContext(request))
     # return render_to_response("spectrum_detail.html", {"details": details, "meta_data": meta_data}, context_instance=RequestContext(request))
 
 
