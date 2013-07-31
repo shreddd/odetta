@@ -17,6 +17,7 @@ import zipfile
 import glob,os
 import StringIO
 import numpy as np
+from odetta.odetta_wrappers import oplot_process
 
 #from simple_chi2 import *
 
@@ -373,5 +374,12 @@ def get_zip_file(request):
 def upload(request, model_id):
     return render_to_response("upload.html", {"model_id":model_id}, context_instance=RequestContext(request))
 
+
+def ajax_overplot(request, model_id):
+    flux_data = oplot_process(file=None, model_id=model_id)
+    data = {
+        "flux_data": flux_data,
+    }
+    return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 
