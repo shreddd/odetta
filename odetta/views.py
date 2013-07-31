@@ -55,7 +55,7 @@ def browse(request, pub_id=None):
             details = ""
             for field_name in publication._meta.get_all_field_names():
                 field = publication._meta.get_field(field_name)
-                if field_name not in ['modeltype']:
+                if field_name not in ['modeltype','fullname','is_public','shortname']:
                     details += "%s: %s; " % (field.verbose_name, publication.__dict__[field_name])
             listing.append({
                 "name": publication.fullname,
