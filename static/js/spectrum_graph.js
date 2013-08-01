@@ -472,9 +472,16 @@ function hideShow(graph_name){
     if($("." + graph_name).attr("display") != 'none'){
         $("." + graph_name).attr("display","none");
         $("." +graph_name + "Btn").html("Show " + graph_name);
+        if(graph_name == "line" && zoom.scale() > 10){
+            circlesLayer.selectAll("circle").remove();
+        }
     }
     else{
         $("." + graph_name).attr("display","inline");
         $("." + graph_name + "Btn").html("Hide " + graph_name);
+        if(zoom.scale() > 10){
+            showCircles();
+            resetMouseListeners();
+        }
     }
 }

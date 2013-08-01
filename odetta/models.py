@@ -65,17 +65,17 @@ class MetaDd2D(models.Model):
     class Meta:
         db_table = 'meta_dd2d'
 
-    @property
-    def date_entered(self):
-        return Models.objects.values("date_entered").get(m_type_id=self.m_type_id)['date_entered']
+    # @property
+    # def date_entered(self):
+    #     return Models.objects.values("date_entered").get(m_type_id=self.m_type_id)['date_entered']
 
-    @property
-    def sntype(self):
-        return Models.objects.values("sntype").get(m_type_id=self.m_type_id)['sntype']
+    # @property
+    # def sntype(self):
+    #     return Models.objects.values("sntype").get(m_type_id=self.m_type_id)['sntype']
 
-    @property
-    def citation(self):
-        return Models.objects.values("citation").get(m_type_id=self.m_type_id)['citation']
+    # @property
+    # def citation(self):
+    #     return Models.objects.values("citation").get(m_type_id=self.m_type_id)['citation']
 
     def has_mu(self):
         return Spectra.objects.filter(model_id=self.model_id).distinct("mu").count() > 1
@@ -91,7 +91,7 @@ class MetaNSM1D(models.Model):
     beta = models.FloatField(null=True, blank=True)
     n = models.FloatField(null=True, blank=True)
     delta = models.FloatField(null=True, blank=True)
-    composition = models.CharField(max_length=4,blank=True)
+    composition = models.CharField(max_length=4)
 
     class Meta:
         db_table = 'meta_nsm1d'
@@ -102,17 +102,6 @@ def get_time_max(model_id):
 
 def get_mu_max(model_id):
     return Spectra.objects.filter(model_id=model_id).values("mu").distinct("mu").order_by("-mu").count() - 1
-
-class Models(models.Model):
-    modeltype = models.CharField(max_length=40, blank=True)
-    modeldim = models.SmallIntegerField(null=True, blank=True)
-    date_entered = models.DateField(null=True, blank=True)
-    citation = models.CharField(max_length=200, blank=True)
-    sntype = models.CharField(max_length=10, blank=True)
-    m_type_id = models.SmallIntegerField(null=True, blank=True, primary_key=True)
-
-    class Meta:
-        db_table = 'models'
 
 
 class SearchForm(forms.Form):
