@@ -68,6 +68,26 @@
         }
     </style>
     <script type="text/javascript">
+    $(document).ready(function(){
+        $(".tabactive").show();
+        $("#grapharea a").click(function(e){
+            if($(this).parent("li[class~=disabled]").length == 0){
+                e.preventDefault();
+                $("#grapharea .active").removeClass("active");
+                $(this).parent("li").addClass("active");
+                showTab($(this).attr("href"));
+            }
+        });
+        function showTab(id){
+            $(".tabactive").removeClass("tabactive").hide();
+            current_doc = $(id).attr("id");
+            $(id).addClass("tabactive").show();
+            current_tab = $(".tabactive li.active").attr("data-input-type");
+            console.log($(id));
+            $(".inputarea:not(.tabactive)").hide();
+        }    
+    });
+
     var m_id = {{meta_data.model_id}};
     $(function() {
         // preloadData(0,100);
@@ -124,73 +144,85 @@
         </ul> 
     </div>
 </div>
-<div class = "span10">
-    <h1>{{meta_data.modelname}}</h1>
-    <div class="graph" id="graph" oncontextmenu="return false">
-        <h2>Spectrum Graph</h2>
-    </div>
-    <script type="text/javascript" src="/static/js/spectrum_graph.js"></script>
-    <div id = "options" class="well">
-        <div id="graphOptions">
-            <div id = "opOptions">
-                <h4>Overplot Options</h4>
-                <div class = "btn-group">
-                    <button class = "btn lineBtn" onclick = "hideShow('line')">Hide Line</button>
-                    <button class = "btn overplotBtn" onclick = "hideShow('overplot')">Hide Overplotted</button>
+<div class = "span10" id = "grapharea">
+    <ul class = "nav nav-tabs">
+        <li class = "active"><a href="#{{meta_data.modelname}}-fluxvals">Flux Graphs</a></li>
+        <li><a href="#{{meta_data.modelname}}-lightcurve">Light Curves</a></li>
+    </ul>
+    <div class = "tab-content">
+        <div class = "tab-pane tab tabactive" id = "{{meta_data.modelname}}-fluxvals">
+            <h1>{{meta_data.modelname}}</h1>
+            <div class="graph" id="graph" oncontextmenu="return false">
+                <h2>Spectrum Graph</h2>
+            </div>
+            <script type="text/javascript" src="/static/js/spectrum_graph.js"></script>
+            <div id = "options" class="well">
+                <div id="graphOptions">
+                    <div id = "opOptions">
+                        <h4>Overplot Options</h4>
+                        <div class = "btn-group">
+                            <button class = "btn lineBtn" onclick = "hideShow('line')">Hide Line</button>
+                            <button class = "btn overplotBtn" onclick = "hideShow('overplot')">Hide Overplotted</button>
+                        </div>
+                    </div>
+                    <h4>Simulation Options</h4>
+                    <div class="btn-group">
+                        <button class="btn" href="#" onclick="moveFrame(-1, 0)"><i class="icon-chevron-left"></i></button>
+                        <input type="text" id="time" value="0"/>
+                        <button class="btn" href="#" onclick="moveFrame(1, 0)"><i class="icon-chevron-right"></i></button>
+                        <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
+                        <button class="btn" onclick = "preloadData('time',$('#angleVal').val())">Get All Time For Current Angle</button>
+                    </div>
+                    <p>Time:</p>
+                    <div id="time-slider"></div>
+                    {% if meta_data.has_mu %}
+                        <div class="btn-group">
+                            <button class="btn" href="#" onclick="moveFrame(0, -1)"><i class="icon-chevron-left"></i></button>
+                            <input type="text" id="angleVal" value="0"/>
+                            <button class="btn" href="#" onclick="moveFrame(0, 1)"><i class="icon-chevron-right"></i></button>
+                            <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
+                            <button class="btn" onclick = "preloadData('mu',$('#time').val())">Get All Angles For Current Time</button>
+                        </div>
+                        <p>Angle:</p>
+                        <div id="mu-slider"></div>
+                    {% endif %}
+                    {% if meta_data.has_phi %}
+                        <div class="btn-group">
+                            <button class="btn" href="#" onclick="moveFrame(0, -1)"><i class="icon-chevron-left"></i></button>
+                            <input type="text" id="phi" value="0"/>
+                            <button class="btn" href="#" onclick="moveFrame(0, 1)"><i class="icon-chevron-right"></i></button>
+                            <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
+                            <button class="btn" onclick = "preloadData('phi',$('#time').val())">Get All Angles For Current Time</button>
+                        </div>
+                        <p>Angle:</p>
+                        <div id="phi-slider"></div>
+                    {% endif %}
                 </div>
             </div>
-            <h4>Simulation Options</h4>
-            <div class="btn-group">
-                <button class="btn" href="#" onclick="moveFrame(-1, 0)"><i class="icon-chevron-left"></i></button>
-                <input type="text" id="time" value="0"/>
-                <button class="btn" href="#" onclick="moveFrame(1, 0)"><i class="icon-chevron-right"></i></button>
-                <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
-                <button class="btn" onclick = "preloadData('time',$('#angleVal').val())">Get All Time For Current Angle</button>
+            <div id="details">
+                <h2>Spectrum Details</h2>
+                <table class="table table-striped table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Attribute</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detail in details %}
+                        <tr>
+                            <td>{{detail.0|capfirst}}</td>
+                            <td>{{detail.1}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <p>Time:</p>
-            <div id="time-slider"></div>
-            {% if meta_data.has_mu %}
-                <div class="btn-group">
-                    <button class="btn" href="#" onclick="moveFrame(0, -1)"><i class="icon-chevron-left"></i></button>
-                    <input type="text" id="angleVal" value="0"/>
-                    <button class="btn" href="#" onclick="moveFrame(0, 1)"><i class="icon-chevron-right"></i></button>
-                    <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
-                    <button class="btn" onclick = "preloadData('mu',$('#time').val())">Get All Angles For Current Time</button>
-                </div>
-                <p>Angle:</p>
-                <div id="mu-slider"></div>
-            {% endif %}
-            {% if meta_data.has_phi %}
-                <div class="btn-group">
-                    <button class="btn" href="#" onclick="moveFrame(0, -1)"><i class="icon-chevron-left"></i></button>
-                    <input type="text" id="phi" value="0"/>
-                    <button class="btn" href="#" onclick="moveFrame(0, 1)"><i class="icon-chevron-right"></i></button>
-                    <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
-                    <button class="btn" onclick = "preloadData('phi',$('#time').val())">Get All Angles For Current Time</button>
-                </div>
-                <p>Angle:</p>
-                <div id="phi-slider"></div>
-            {% endif %}
+        </div>
+        <div class = "tab-pane tab" id = "{{meta_data.modelname}}-lightcurve">
+            Nothing yet. 
         </div>
     </div>
-    <div id="details">
-        <h2>Spectrum Details</h2>
-        <table class="table table-striped table-hover table-condensed">
-            <thead>
-                <tr>
-                    <th>Attribute</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for detail in details %}
-                <tr>
-                    <td>{{detail.0|capfirst}}</td>
-                    <td>{{detail.1}}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    
 </div>
 {% endblock content %}
