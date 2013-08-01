@@ -42,7 +42,6 @@ class Fluxvals(models.Model):
     wavelength = models.FloatField()
     luminosity = models.FloatField(null=True, blank=True)
     photon_count = models.FloatField(null=True, blank=True)
-    model_id = models.IntegerField()
 
     class Meta:
         db_table = 'fluxvals'
@@ -83,6 +82,19 @@ class MetaDd2D(models.Model):
 
     def has_phi(self):
         return Spectra.objects.filter(model_id=self.model_id).distinct("phi").count() > 1
+
+class MetaNSM1D(models.Model):
+    pub_id = models.IntegerField()
+    model_id = models.IntegerField(primary_key=True)
+    modelname = models.CharField(max_length=40, blank=True)
+    m_ej = models.FloatField(null=True, blank=True)
+    beta = models.FloatField(null=True, blank=True)
+    n = models.FloatField(null=True, blank=True)
+    delta = models.FloatField(null=True, blank=True)
+    composition = models.CharField(max_length=4,blank=True)
+
+    class Meta:
+        db_table = 'meta_nsm1d'
 
 
 def get_time_max(model_id):

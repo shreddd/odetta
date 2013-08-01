@@ -63,7 +63,9 @@
             width:500px;
             height:20px;
         }
-
+        #opOptions{
+            display:none;
+        }
     </style>
     <script type="text/javascript">
     var m_id = {{meta_data.model_id}};
@@ -123,15 +125,21 @@
     </div>
 </div>
 <div class = "span10">
-    <h1>Model {{meta_data.model_id}}: {{meta_data.modelname}}</h1>
+    <h1>{{meta_data.modelname}}</h1>
     <div class="graph" id="graph" oncontextmenu="return false">
         <h2>Spectrum Graph</h2>
     </div>
     <script type="text/javascript" src="/static/js/spectrum_graph.js"></script>
     <div id = "options" class="well">
         <div id="graphOptions">
-            <h4>Graph Options</h4>
-
+            <div id = "opOptions">
+                <h4>Overplot Options</h4>
+                <div class = "btn-group">
+                    <button class = "btn lineBtn" onclick = "hideShow('line')">Hide Line</button>
+                    <button class = "btn overplotBtn" onclick = "hideShow('overplot')">Hide Overplotted</button>
+                </div>
+            </div>
+            <h4>Simulation Options</h4>
             <div class="btn-group">
                 <button class="btn" href="#" onclick="moveFrame(-1, 0)"><i class="icon-chevron-left"></i></button>
                 <input type="text" id="time" value="0"/>

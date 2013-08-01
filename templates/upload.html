@@ -21,6 +21,7 @@
             success: function(response){
                 $(".closedialog").click();
                 graphOverplot(response.flux_data);
+                $("#opOptions").css("display","block");
                 $("#loadingscreen").remove();
             },
             data: formData,

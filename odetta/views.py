@@ -50,7 +50,7 @@ def browse(request, pub_id=None):
             })
     else:
         breadcrumbs = [{"name": "Publications", "url": reverse("odetta.views.browse"), "active": True}]
-        data = Publications.objects.all()        
+        data = Publications.objects.all().order_by("fullname")        
         for publication in data:
             details = ""
             for field_name in publication._meta.get_all_field_names():
@@ -277,12 +277,12 @@ def about(request):
 
 def run_all_data(request, x2, y2, y2var):
     #get id's
-    qset = Fluxvals.objects.distinct('m_id')
+    qset = Spectra.objects.distinct('model_id')
     m_id = [rec.m_id for rec in qset]
     print "There are " + len(m_id) + " spectra in DB. Running them all..."
 
     #get wavelengths
-    qset2 = Fluxvals.objects.filter(m_id=1)
+    qset2 = Spectra.objects.filter(model_id=1)
     waves = [rec.wavelength for rec in qset2]
     ##need to add something to make sure we have same grid for both spectra
     ##HERE
@@ -340,7 +340,7 @@ def plot_img(request, model_id, time_step=0, mu_step=0):
 
 
 def plot_few(request,id):
-    qset = Fluxvals.objects.filter(m_id=id)
+    qset = Spectra.objects.filter(model_id=id)
     wave = [rec.wavelength for rec in qset]
     lum = [rec.luminosity for rec in qset]
     ttle = 'Model '+str(id)

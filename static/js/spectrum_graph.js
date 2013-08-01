@@ -115,6 +115,53 @@ var yAxis = d3.svg.axis()
     return d.toExponential(1);
 });
 
+// var legend = [
+//     {
+//         width:145,
+//         height:17,
+//         x:width - 175,
+//         y: 25,
+//         name: 'Overplot Options', 
+//         options:[
+//             {x:10, y:10, height:15, width:15, fill: "green", stroke:"black"},
+//             {x:10, y:40, height:15, width:15, fill: "steelblue", stroke:"black"}
+//         ]
+//     }
+// ];
+//This  does not work
+// gOptions.selectAll('rect.options')
+//     .data(function(d){return d.options;})
+//     .enter()
+//     .append('rect')
+//     .classed('checkboxes',true)
+//         .attr('x', function(d){return d.x;})
+//         .attr('y',function(d){return d.y;})
+//         .attr('width',function(d){return d.width;})
+//         .attr('height',function(d){return d.height;})
+//         .attr('fill',function(d){return d.fill;})
+//         .attr('stroke',function(d){return d.stroke;})
+//         .on('click', function(d) {
+//             if(d.fill == "green"){
+//                 hideShow("overplot");
+//             } else{
+//                 hideShow("line");
+//             }
+//         });
+// var gOptions = svg.selectAll('g.legend')
+//     .data(legend)
+//     .enter()
+//     .append('g')
+//     .classed('legend',true);
+
+// gOptions.append('rect')
+//     .classed('legend',true)
+//     .attr('width',function(d){return d.width})
+//     .attr('height',function(d){return d.height})
+//     .attr('x',function(d){return d.x})
+//     .attr('y',function(d){return d.y})
+//     .attr('fill',"lightgray")
+//     .attr('stroke','black');
+
 svg.append("g")
 .attr("class", "y axis")
 .call(yAxis);
@@ -142,7 +189,6 @@ var clip = svg.append("svg:clipPath")
 
 var chartBody = svg.append("g")
 .attr("clip-path", "url(#clip)");
-
 
 var circlesLayer = chartBody.append("g")
 .attr("id","circles")
@@ -175,8 +221,8 @@ svg.append("rect")
 .attr("height",15)
 .attr("x",width - 165)
 .attr("y",35)
-.attr("id","oplotbox")
-.on("mousedown",hideShow(".overplot"))
+.attr("fill","green")
+.attr("stroke","black")
 
 svg.append("text")
 .attr("x",width - 145)
@@ -189,8 +235,8 @@ svg.append("rect")
 .attr("height",15)
 .attr("x",width - 165)
 .attr("y",65)
-.attr("id","linebox")
-.on("mousedown",hideShow(".line"))
+.attr("fill","steelblue")
+.attr("stroke","black")
 
 svg.append("text")
 .attr("x",width - 145)
@@ -422,11 +468,13 @@ function resetMouseListeners(){
                 .remove();
         });
 }
-function hideShow(selector){
-    if($(selector).attr("display") != 'none'){
-        $(selector).attr("display","none");
+function hideShow(graph_name){
+    if($("." + graph_name).attr("display") != 'none'){
+        $("." + graph_name).attr("display","none");
+        $("." +graph_name + "Btn").html("Show " + graph_name);
     }
     else{
-        $(selector).attr("display","inline");
+        $("." + graph_name).attr("display","inline");
+        $("." + graph_name + "Btn").html("Hide " + graph_name);
     }
 }
