@@ -13,6 +13,9 @@ class Publications(models.Model):
     fullname = models.CharField(max_length=200,blank=True)
     shortname = models.CharField(max_length=200,blank=True)
     is_public = models.BooleanField()
+    metatype = models.CharField(max_length=200, blank=True)
+    summary = models.TextField()
+    url = models.CharField(max_length=200,blank=True)
 
     class Meta:
         db_table = 'publications'
@@ -83,7 +86,7 @@ class MetaDd2D(models.Model):
     def has_phi(self):
         return Spectra.objects.filter(model_id=self.model_id).distinct("phi").count() > 1
 
-class MetaNSM1D(models.Model):
+class MetaNsm1D(models.Model):
     pub_id = models.IntegerField()
     model_id = models.IntegerField(primary_key=True)
     modelname = models.CharField(max_length=40, blank=True)

@@ -22,6 +22,7 @@
                 $(".closedialog").click();
                 graphOverplot(response.flux_data);
                 $("#opOptions").css("display","block");
+                $("#legend").attr("display","inline");
                 $("#loadingscreen").remove();
             },
             data: formData,

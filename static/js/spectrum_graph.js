@@ -209,14 +209,19 @@ svg.append("text")
 .attr("transform","rotate(-90)")
 .text("Luminosity (lux)")
 
-svg.append("rect")
+var legendBox = svg.append("g")
 .attr("id","legend")
+.attr('display','none')
+
+legendBox.append("rect")
 .attr("width",155)
 .attr("height",70)
 .attr("x",width - 175)
 .attr("y",25)
+.attr("fill","lightgray")
+.attr("stroke","black")
 
-svg.append("rect")
+legendBox.append("rect")
 .attr("width",15)
 .attr("height",15)
 .attr("x",width - 165)
@@ -224,13 +229,13 @@ svg.append("rect")
 .attr("fill","green")
 .attr("stroke","black")
 
-svg.append("text")
+legendBox.append("text")
 .attr("x",width - 145)
 .attr("y",47)
 .text("Overplotted Graph")
 .attr("class", "legendtext")
 
-svg.append("rect")
+legendBox.append("rect")
 .attr("width",15)
 .attr("height",15)
 .attr("x",width - 165)
@@ -238,7 +243,7 @@ svg.append("rect")
 .attr("fill","steelblue")
 .attr("stroke","black")
 
-svg.append("text")
+legendBox.append("text")
 .attr("x",width - 145)
 .attr("y",77)
 .text("Simulated Graph")
@@ -475,6 +480,7 @@ function hideShow(graph_name){
         if(graph_name == "line" && zoom.scale() > 10){
             circlesLayer.selectAll("circle").remove();
         }
+        $("#legend").attr("display","none");
     }
     else{
         $("." + graph_name).attr("display","inline");
@@ -483,5 +489,6 @@ function hideShow(graph_name){
             showCircles();
             resetMouseListeners();
         }
+        $("#legend").attr("display","inline");
     }
 }

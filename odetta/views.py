@@ -36,7 +36,8 @@ def browse(request, pub_id=None):
             "url": reverse("odetta.views.browse", kwargs={"pub_id": pub_id}),
             "active": True,
         })
-        data = MetaDd2D.objects.filter(pub_id=pub_id).order_by("model_id")
+        metatype = Publications.objects.get(pub_id=pub_id).metatype[:4].title() + Publications.objects.get(pub_id=pub_id).metatype[5:-1].title() + Publications.objects.get(pub_id=pub_id).metatype[-1:].upper()
+        data = eval(metatype).objects.filter(pub_id=pub_id).order_by("model_id")
         for model in data:
             details = ""
             for field_name in model._meta.get_all_field_names():
@@ -55,7 +56,7 @@ def browse(request, pub_id=None):
             details = ""
             for field_name in publication._meta.get_all_field_names():
                 field = publication._meta.get_field(field_name)
-                if field_name not in ['modeltype','fullname','is_public','shortname', 'pub_id']:
+                if field_name not in ['modeltype','fullname','is_public','shortname', 'pub_id', 'url', 'summary', 'metatype']:
                     details += "%s: %s; " % (field.verbose_name, publication.__dict__[field_name])
             listing.append({
                 "name": publication.fullname,
@@ -138,6 +139,7 @@ def search_models(request):
 
 
 def plot(request, model_id):
+    # metatype = Publications.objects.get(pub_id=pub_id).metatype[:4].title() + Publications.objects.get(pub_id=pub_id).metatype[5:-1].title() + Publications.objects.get(pub_id=pub_id).metatype[-1:].upper()
     meta_data = MetaDd2D.objects.filter(model_id = model_id)[0]
     breadcrumbs = [{"name": "Publications", "url": reverse("odetta.views.browse")}]
     breadcrumbs.append({
@@ -155,7 +157,7 @@ def plot(request, model_id):
     details = []
     for field in meta_data._meta.get_all_field_names():
         details.append((meta_data._meta.get_field(field).verbose_name, getattr(meta_data, field.__str__())))
-    return render_to_response("spectrum_detail.html", {"breadcrumbs":breadcrumbs, "details": details, "meta_data": meta_data, "mu_max": get_mu_max(model_id), "time_max": get_time_max(model_id)}, context_instance=RequestContext(request))
+    return render_to_response("spectrum_detail.html", {"breadcrumbs":breadcrumbs, "details": details, "meta_data": meta_data, "mu_max": get_mu_max(model_id), "time_max": get_time_max(model_id), "summary": Publications.objects.get(pub_id = meta_data.pub_id).summary, "url": Publications.objects.get(pub_id = meta_data.pub_id).url}, context_instance=RequestContext(request))
     # return render_to_response("spectrum_detail.html", {"details": details, "meta_data": meta_data}, context_instance=RequestContext(request))
 
 

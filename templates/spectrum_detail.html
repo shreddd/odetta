@@ -143,6 +143,11 @@
             <li><a href="{% url 'odetta.views.upload' model_id=meta_data.model_id %}" class = "popup">Upload File</a></li>
         </ul> 
     </div>
+    <div class = "well">
+        <h4>Publication Summary</h4>
+        <p><a href = "{{url}}">Publication Url</a></p>
+        <p>{{summary}}</p>
+    </div>
 </div>
 <div class = "span10" id = "grapharea">
     <ul class = "nav nav-tabs">
