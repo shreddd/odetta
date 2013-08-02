@@ -13,7 +13,7 @@ class Publications(models.Model):
     fullname = models.CharField(max_length=200,blank=True)
     shortname = models.CharField(max_length=200,blank=True)
     is_public = models.BooleanField()
-    metatype = models.CharField(max_length=200, blank=True)
+    metatype = models.CharField(max_length=20, blank=True)
     summary = models.TextField()
     url = models.CharField(max_length=200,blank=True)
 
@@ -36,6 +36,7 @@ class Spectra(models.Model):
     t_expl= models.FloatField(null=True,blank=True)
     mu = models.FloatField(null=True,blank=True)
     phi = models.FloatField(null=True, blank=True)
+    metatype = models.CharField(max_length=20, blank=True)
     
     class Meta:
         db_table = 'spectra'
@@ -106,11 +107,19 @@ def get_time_max(model_id):
 def get_mu_max(model_id):
     return Spectra.objects.filter(model_id=model_id).values("mu").distinct("mu").order_by("-mu").count() - 1
 
+def get_time_val(model_id):
+    times = []
+    for time in Spectra.objects.filter(model_id = 1).values("t_expl").distinct("t_expl").order_by("t_expl"):
+        times.append(time["t_expl"]) 
+    return times
+
+def get_mu_val(model_id):
+    mu_steps = []
+    for mu in Spectra.objects.filter(model_id = 1).values("mu").distinct("mu").order_by("mu"):
+        mu_steps.append(mu["mu"]) 
+    return mu_steps
 
 class SearchForm(forms.Form):
-    model_id = forms.IntegerField(required=False, label='Model ID')
-    modeltype = forms.CharField(required=False, label="Model Type")
-    modeldim = forms.IntegerField(required=False, label="Model Dimension")
-    date_entered = forms.DateField(required=False, label="Date Entered")
-    citation = forms.CharField(required=False, label="Citation")
-    sntype = forms.CharField(required=False, label="SN Type")
+    min_mass = forms.IntegerField(required=False, label='Minimum Mass')
+    max_mass = forms.IntegerField(required=False, label="Maximum Mass")
+    max_lum = forms.IntegerField(required=False, label="Peak Luminosity")

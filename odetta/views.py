@@ -139,8 +139,8 @@ def search_models(request):
 
 
 def plot(request, model_id):
-    # metatype = Publications.objects.get(pub_id=pub_id).metatype[:4].title() + Publications.objects.get(pub_id=pub_id).metatype[5:-1].title() + Publications.objects.get(pub_id=pub_id).metatype[-1:].upper()
-    meta_data = MetaDd2D.objects.filter(model_id = model_id)[0]
+    metatype = Spectra.objects.filter(model_id = model_id).distinct("model_id")[0].metatype[:4].title() + Spectra.objects.filter(model_id = model_id).distinct("model_id")[0].metatype[5:-1].title() + Spectra.objects.filter(model_id = model_id).distinct("model_id")[0].metatype[-1:].upper()
+    meta_data = eval(metatype).objects.filter(model_id = model_id)[0]
     breadcrumbs = [{"name": "Publications", "url": reverse("odetta.views.browse")}]
     breadcrumbs.append({
         "name": Publications.objects.get(pub_id=meta_data.pub_id).shortname,
@@ -157,7 +157,7 @@ def plot(request, model_id):
     details = []
     for field in meta_data._meta.get_all_field_names():
         details.append((meta_data._meta.get_field(field).verbose_name, getattr(meta_data, field.__str__())))
-    return render_to_response("spectrum_detail.html", {"breadcrumbs":breadcrumbs, "details": details, "meta_data": meta_data, "mu_max": get_mu_max(model_id), "time_max": get_time_max(model_id), "summary": Publications.objects.get(pub_id = meta_data.pub_id).summary, "url": Publications.objects.get(pub_id = meta_data.pub_id).url}, context_instance=RequestContext(request))
+    return render_to_response("spectrum_detail.html", {"breadcrumbs":breadcrumbs, "details": details, "meta_data": meta_data, "mu_max": get_mu_max(model_id), "time_max": get_time_max(model_id), "time_vals":get_time_val(model_id), "mu_vals": get_mu_val(model_id), "summary": Publications.objects.get(pub_id = meta_data.pub_id).summary, "url": Publications.objects.get(pub_id = meta_data.pub_id).url}, context_instance=RequestContext(request))
     # return render_to_response("spectrum_detail.html", {"details": details, "meta_data": meta_data}, context_instance=RequestContext(request))
 
 
