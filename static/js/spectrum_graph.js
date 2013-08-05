@@ -324,6 +324,7 @@ function preloadData(method, step, step2){
                 if(frameData[d.time_step][d.mu_step][d.phi_step] == undefined){
                     frameData[d.time_step][d.mu_step][d.phi_step] = d.flux_data;
                 }
+                
             }
         }
         $("#loadingscreen").remove();

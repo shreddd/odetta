@@ -112,7 +112,7 @@
                 $("#timeStep").val(ui.value);
                 $("#time").val({{time_vals}}[ui.value]);
                 $("#tslider-step").val(ui.value);
-                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#time").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
+                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#timeStep").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
             },
         });
         $( "#mu-slider" ).slider({
@@ -130,7 +130,7 @@
                 $("muStep").val(ui.value);
                 $("#muVal").val({{mu_vals}}[ui.value]);
                 $("#mslider-step").val(ui.value);
-                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#time").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
+                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#timeStep").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
             },
         });
         $( "#phi-slider" ).slider({
@@ -148,7 +148,7 @@
                 $("muStep").val(ui.value);
                 $("#muVal").val({{mu_vals}}[ui.value]);
                 $("#mslider-step").val(ui.value);
-                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#time").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
+                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#timeStep").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
             },
         });
         $("#time").change(function(){
@@ -221,7 +221,7 @@
                             <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
                             <button class="btn" onclick = "preloadData('mu',$('#timeStep').val(),$('#phiStep').val())">Get All Mu For Current State</button>
                         </div>
-                        <p>Angle:</p>
+                        <p>Mu:</p>
                         <div id="mu-slider"></div>
                         <input type = "hidden" id = "mslider-step"/>
                     {% endif %}
