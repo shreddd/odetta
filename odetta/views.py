@@ -161,7 +161,7 @@ def plot(request, model_id):
     # return render_to_response("spectrum_detail.html", {"details": details, "meta_data": meta_data}, context_instance=RequestContext(request))
 
 
-def get_plot_data(request, model_id, time_step=0, mu_step=0):
+def get_plot_data(request, model_id, time_step=0, mu_step=0, phi_step=0):
     spectra = Spectra.objects.filter(model_id=model_id)
     if spectra.count() <= 0:
         raise Http404
@@ -175,12 +175,16 @@ def get_plot_data(request, model_id, time_step=0, mu_step=0):
         all_mu_steps = spectra.filter(t_expl=t_expl).values("mu").order_by("-mu")
         mu = all_mu_steps[int(mu_step)]["mu"]
     except IndexError:
-        # return HttpResponse(simplejson.dumps({"success": False, "error": "mu_step index out of bounds", "max_mu_steps": all_mu_steps.count()}), content_type="application/json")
         mu = 0
+    try:
+        all_phi_steps = spectra.filter(t_expl=t_expl).values("phi").order_by("-phi")
+        phi = all_phi_steps[int(phi_step)]["phi"]
+    except IndexError:
+        phi = 0    
 
     # Gets the meta data based on the calculated mu and t_expl
     # Uses range to prevent floating point errors
-    spec_data = spectra.get(mu__range=(mu-0.01, mu+0.01), t_expl__range=(t_expl-0.01, t_expl+0.01))
+    spec_data = spectra.get(mu__range=(mu-0.01, mu+0.01), t_expl__range=(t_expl-0.01, t_expl+0.01), phi__range=(phi-0.01, phi+0.01))
 
     # Populates a flux data array from the spec_id of the selected meta_data
     qset = Fluxvals.objects.filter(spec_id=spec_data.spec_id).order_by("wavelength")
@@ -197,13 +201,15 @@ def get_plot_data(request, model_id, time_step=0, mu_step=0):
         "max_time_steps": all_time_steps.count()-1,
         "mu_step": int(mu_step),
         "mu": float(mu),
+        "phi_step": int(phi_step),
+        "phi": float(phi),
         "max_mu_steps": all_mu_steps.count()-1,
         "flux_data": flux_data,
     }
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 
-def batch_time_data(request, model_id, mu_step):
+def batch_time_data(request, model_id, mu_step, phi_step):
     model = Spectra.objects.filter(model_id=model_id)
 
     if model.count() <= 0:
@@ -214,6 +220,12 @@ def batch_time_data(request, model_id, mu_step):
         mu = all_mu_steps[int(mu_step)]["mu"]
     except IndexError:
         mu = 0
+    try:
+        all_phi_steps = model.values("phi").distinct("phi").order_by("-phi")
+        phi = all_phi_steps[int(phi_step)]["phi"]
+    except IndexError:
+        phi = 0
+
 
     meta_datas = model.filter(mu__range=(mu-0.01, mu+0.01)).order_by("t_expl")
     data = []
@@ -222,6 +234,7 @@ def batch_time_data(request, model_id, mu_step):
         data.append({
             "time_step": int(index),
             "mu_step": int(mu_step),
+            "phi_step": int(phi_step),
             "flux_data": [],
         })
         qset = Fluxvals.objects.filter(spec_id=m.spec_id).order_by("wavelength")
@@ -234,7 +247,7 @@ def batch_time_data(request, model_id, mu_step):
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 
-def batch_angle_data(request, model_id, time_step):
+def batch_angle_data(request, model_id, time_step, phi_step):
     model = Spectra.objects.filter(model_id=model_id)
 
     if model.count() <= 0:
@@ -245,6 +258,11 @@ def batch_angle_data(request, model_id, time_step):
         t_expl = all_time_steps[int(time_step)]["t_expl"]
     except IndexError:
         return HttpResponse(simplejson.dumps({"success": False, "error": "time_step index out of bounds", "max_time_steps": all_time_steps.count()}), content_type="application/json")
+    try:
+        all_phi_steps = model.values("phi").distinct("phi").order_by("-phi")
+        phi = all_phi_steps[int(phi_step)]["phi"]
+    except IndexError:
+        phi = 0
 
     meta_datas = model.filter(t_expl=t_expl).order_by("-mu")
     data = []
@@ -253,6 +271,7 @@ def batch_angle_data(request, model_id, time_step):
         data.append({
             "time_step": int(time_step),
             "mu_step": int(index),
+            "phi_step": int(phi_step),
             "flux_data": [],
         })
         qset = Fluxvals.objects.filter(spec_id=m.spec_id).order_by("wavelength")
