@@ -84,7 +84,7 @@ svg.append("svg:rect")
 .attr("class", "plot");
 
 $(document).ready(function(){
-    getData(0,0);
+    getData(0,0,0);
 });
 
 var make_x_axis = function () {
@@ -290,6 +290,7 @@ function showCircles(){
 
 var currTime = 0;
 var currMu = 0;
+var currPhi = 0;
 var frameData = [];
 var clearData = true;
 var animation;
@@ -303,7 +304,7 @@ function runAnimation(start, end, speed){
 }
 
 function getNextFrame(){
-    moveFrame(1, 0);
+    moveFrame(1, 0, 0);
 }
 
 function preloadData(method, step, step2){
@@ -329,7 +330,7 @@ function preloadData(method, step, step2){
     });
 }
 
-function moveFrame(time, mu){
+function moveFrame(time, mu, phi){
     currTime+=parseInt(time);
     if(currTime < 0){
         currTime = 0;
@@ -338,20 +339,26 @@ function moveFrame(time, mu){
     if(currMu < 0){
         currMu = 0;
     }
+    currPhi+=parseInt(mu);
+    if(currPhi < 0){
+        currPhi = 0;
+    }
     $("#time-slider").slider("option", "value", currTime);
     $("#mu-slider").slider("option", "value", currMu);
+    $("#phi-slider").slider("option", "value", currPhi);
 }
 
-function getData(time, mu){
-    if(frameData[time]&&frameData[time][mu]){
-        graphData(frameData[time][mu]);
+function getData(time, mu, phi){
+    if(frameData[time]&&frameData[time][mu]&&frameData[time][mu][phi]){
+        graphData(frameData[time][mu][phi]);
         currTime = parseInt(time);
         currMu = parseInt(mu);
+        currPhi = parseInt(phi)
         if(rescale){
             restoreScale();
         }
     }else{
-        d3.json("/ajax/plot/"+m_id+"/"+time+"/"+mu+"/", function(error, data){
+        d3.json("/ajax/plot/"+m_id+"/"+time+"/"+mu+"/"+phi+"/", function(error, data){
             if (error || data.success == false){
                 if(error){
                     console.log(error);
@@ -367,6 +374,7 @@ function getData(time, mu){
                 graphData(data.flux_data);
                 currTime = parseInt(data.time_step);
                 currMu = parseInt(data.mu_step);
+                currPhi = parseInt(data.phi_step);
                 if(rescale){
                     restoreScale();
                 }

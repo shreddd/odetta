@@ -12,7 +12,7 @@
         .span10 h1{
             text-align: center;
         }
-        #time, #muVal{
+        #time, #muVal, #phiVal{
             width:30px;
             margin:0;
             text-align: center;
@@ -74,7 +74,7 @@
     $(document).ready(function(){
         $("#time").val({{time_vals}}[0]);
         $("#muVal").val({{mu_vals}}[0]);
-        $("#phiStep").val({{phi_vals}}[0]);
+        $("#phiVal").val({{phi_vals}}[0]);
         $(".tabactive").show();
         $("#grapharea a").click(function(e){
             if($(this).parent("li[class~=disabled]").length == 0){
@@ -102,38 +102,54 @@
             min: 0,
             max: {{time_max}},
             slide: function( event, ui ){
-                getData(ui.value, currMu);
-                console.log(ui.value);
+                getData(ui.value, currMu, currPhi);
                 $("#timeStep").val(ui.value);
                 $("#time").val({{time_vals}}[ui.value]);
                 $("#tslider-step").val(ui.value);
             },
             change: function(event, ui){
-                getData(ui.value, currMu);
+                getData(ui.value, currMu, currPhi);
                 $("#timeStep").val(ui.value);
                 $("#time").val({{time_vals}}[ui.value]);
                 $("#tslider-step").val(ui.value);
-                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#time").val() + "/" + $("#muVal").val() + "/img/?download=1");
-            }
+                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#time").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
+            },
         });
         $( "#mu-slider" ).slider({
             value: 0,
             min: 0,
             max: {{mu_max}},
             slide: function( event, ui ){
-                getData(currTime, ui.value);
-                muVal = ui.value;
-                $("muStep").val(muVal);
+                getData(currTime, ui.value, currPhi);
+                $("muStep").val(ui.value);
                 $("#muVal").val({{mu_vals}}[ui.value]);
                 $("#mslider-step").val(ui.value);
             },
             change: function(event, ui){
-                getData(currTime, ui.value);
-                $("muStep").val(muVal);
+                getData(currTime, ui.value, currPhi);
+                $("muStep").val(ui.value);
                 $("#muVal").val({{mu_vals}}[ui.value]);
                 $("#mslider-step").val(ui.value);
-                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#time").val() + "/" + $("#muVal").val() + "/img/?download=1");
-            }
+                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#time").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
+            },
+        });
+        $( "#phi-slider" ).slider({
+            value: 0,
+            min: 0,
+            max: {{phi_max}},
+            slide: function( event, ui ){
+                getData(currTime, currMu, ui.value);
+                $("muStep").val(ui.value);
+                $("#muVal").val({{mu_vals}}[ui.value]);
+                $("#mslider-step").val(ui.value);
+            },
+            change: function(event, ui){
+                getData(currTime, currMu, ui.value);
+                $("muStep").val(ui.value);
+                $("#muVal").val({{mu_vals}}[ui.value]);
+                $("#mslider-step").val(ui.value);
+                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#time").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
+            },
         });
         $("#time").change(function(){
             $("#time-slider").slider("option", "value", $(this).val().replace(/[a-zA-Z]/g, ""));
@@ -154,7 +170,7 @@
             <li class="nav-header">Index</li>
             <li><a href="#graph">Graph</a></li>
             <li><a href="#details">Details</a></li>
-            <li><a id = "image_download" href="{% url 'odetta.views.plot_img' model_id=meta_data.model_id time_step=0 mu_step=0%}?download=1">Download Image</a></li>
+            <li><a id = "image_download" href="{% url 'odetta.views.plot_img' model_id=meta_data.model_id time_step=0 mu_step=0 phi_step=0 %}?download=1">Download Image</a></li>
             <li><a href="{% url 'odetta.views.get_zip_file' %}">Download Model</a></li>
             <li><a href="{% url 'odetta.views.upload' model_id=meta_data.model_id %}" class = "popup">Upload File</a></li>
         </ul> 
@@ -188,22 +204,22 @@
                     </div>
                     <h4>Simulation Options</h4>
                     <div class="btn-group">
-                        <button class="btn" href="#" onclick="moveFrame(-1, 0)"><i class="icon-chevron-left"></i></button>
+                        <button class="btn" href="#" onclick="moveFrame(-1, 0, 0)"><i class="icon-chevron-left"></i></button>
                         <input type="text" id="time" value="0"/>
-                        <button class="btn" href="#" onclick="moveFrame(1, 0)"><i class="icon-chevron-right"></i></button>
+                        <button class="btn" href="#" onclick="moveFrame(1, 0, 0)"><i class="icon-chevron-right"></i></button>
                         <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
-                        <button class="btn" onclick = "preloadData('time',$('#muStep').val(),$('#phiStep').val())">Get All Time For Current Angle</button>
+                        <button class="btn" onclick = "preloadData('time',$('#muStep').val(),$('#phiStep').val())">Get All Time For Current State</button>
                     </div>
                     <p>Time:</p>
                     <div id="time-slider"></div>
                     <input type = "hidden" id = "tslider-step"/>
                     {% if meta_data.has_mu %}
                         <div class="btn-group">
-                            <button class="btn" href="#" onclick="moveFrame(0, -1)"><i class="icon-chevron-left"></i></button>
+                            <button class="btn" href="#" onclick="moveFrame(0, -1, 0)"><i class="icon-chevron-left"></i></button>
                             <input type="text" id="muVal" value="0"/>
-                            <button class="btn" href="#" onclick="moveFrame(0, 1)"><i class="icon-chevron-right"></i></button>
+                            <button class="btn" href="#" onclick="moveFrame(0, 1, 0)"><i class="icon-chevron-right"></i></button>
                             <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
-                            <button class="btn" onclick = "preloadData('mu',$('#timeStep').val(),$('#phiStep').val())">Get All Angles For Current Time</button>
+                            <button class="btn" onclick = "preloadData('mu',$('#timeStep').val(),$('#phiStep').val())">Get All Mu For Current State</button>
                         </div>
                         <p>Angle:</p>
                         <div id="mu-slider"></div>
@@ -211,11 +227,11 @@
                     {% endif %}
                     {% if meta_data.has_phi %}
                         <div class="btn-group">
-                            <button class="btn" href="#" onclick="moveFrame(0, -1)"><i class="icon-chevron-left"></i></button>
-                            <input type="text" id="phi" value="0"/>
-                            <button class="btn" href="#" onclick="moveFrame(0, 1)"><i class="icon-chevron-right"></i></button>
+                            <button class="btn" href="#" onclick="moveFrame(0, 0, -1)"><i class="icon-chevron-left"></i></button>
+                            <input type="text" id="phiVal" value="0"/>
+                            <button class="btn" href="#" onclick="moveFrame(0, 0, 1)"><i class="icon-chevron-right"></i></button>
                             <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
-                            <button class="btn" onclick = "preloadData('phi',$('#time').val())">Get All Angles For Current Time</button>
+                            <button class="btn" onclick = "preloadData('phi',$('#time').val(), $('muStep').val())">Get All Phi For Current State</button>
                         </div>
                         <p>Angle:</p>
                         <div id="phi-slider"></div>

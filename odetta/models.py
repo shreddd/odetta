@@ -107,6 +107,9 @@ def get_time_max(model_id):
 def get_mu_max(model_id):
     return Spectra.objects.filter(model_id=model_id).values("mu").distinct("mu").order_by("-mu").count() - 1
 
+def get_phi_max(model_id):
+    return Spectra.objects.filter(model_id=model_id).values("phi").distinct("phi").order_by("-phi").count() - 1
+
 def get_time_val(model_id):
     times = []
     for time in Spectra.objects.filter(model_id = 1).values("t_expl").distinct("t_expl").order_by("t_expl"):

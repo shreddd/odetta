@@ -157,7 +157,7 @@ def plot(request, model_id):
     details = []
     for field in meta_data._meta.get_all_field_names():
         details.append((meta_data._meta.get_field(field).verbose_name, getattr(meta_data, field.__str__())))
-    return render_to_response("spectrum_detail.html", {"breadcrumbs":breadcrumbs, "details": details, "meta_data": meta_data, "mu_max": get_mu_max(model_id), "time_max": get_time_max(model_id), "time_vals":get_time_val(model_id), "mu_vals": get_mu_val(model_id), "summary": Publications.objects.get(pub_id = meta_data.pub_id).summary, "url": Publications.objects.get(pub_id = meta_data.pub_id).url}, context_instance=RequestContext(request))
+    return render_to_response("spectrum_detail.html", {"breadcrumbs":breadcrumbs, "details": details, "meta_data": meta_data, "mu_max": get_mu_max(model_id), "time_max": get_time_max(model_id), "phi_max":get_phi_max(model_id), "time_vals":get_time_val(model_id), "mu_vals": get_mu_val(model_id), "summary": Publications.objects.get(pub_id = meta_data.pub_id).summary, "url": Publications.objects.get(pub_id = meta_data.pub_id).url}, context_instance=RequestContext(request))
     # return render_to_response("spectrum_detail.html", {"details": details, "meta_data": meta_data}, context_instance=RequestContext(request))
 
 
@@ -227,7 +227,7 @@ def batch_time_data(request, model_id, mu_step, phi_step):
         phi = 0
 
 
-    meta_datas = model.filter(mu__range=(mu-0.01, mu+0.01)).order_by("t_expl")
+    meta_datas = model.filter(mu__range=(mu-0.01, mu+0.01)).filter(phi__range=(phi-0.01, phi+0.01)).order_by("t_expl")
     data = []
     index = 0
     for m in meta_datas:
@@ -247,7 +247,7 @@ def batch_time_data(request, model_id, mu_step, phi_step):
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 
-def batch_angle_data(request, model_id, time_step, phi_step):
+def batch_mu_data(request, model_id, time_step, phi_step):
     model = Spectra.objects.filter(model_id=model_id)
 
     if model.count() <= 0:
@@ -264,7 +264,7 @@ def batch_angle_data(request, model_id, time_step, phi_step):
     except IndexError:
         phi = 0
 
-    meta_datas = model.filter(t_expl=t_expl).order_by("-mu")
+    meta_datas = model.filter(t_expl=t_expl).filter(phi__range=(phi-0.01, phi+0.01)).order_by("-mu")
     data = []
     index = 0
     for m in meta_datas:
@@ -283,6 +283,41 @@ def batch_angle_data(request, model_id, time_step, phi_step):
         index += 1
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
+def batch_phi_data(request, model_id, time_step, mu_step):
+    model = Spectra.objects.filter(model_id=model_id)
+
+    if model.count() <= 0:
+        raise Http404
+
+    try:
+        all_time_steps = model.values("t_expl").distinct("t_expl").order_by("t_expl")
+        t_expl = all_time_steps[int(time_step)]["t_expl"]
+    except IndexError:
+        return HttpResponse(simplejson.dumps({"success": False, "error": "time_step index out of bounds", "max_time_steps": all_time_steps.count()}), content_type="application/json")
+    try:
+        all_mu_steps = model.values("mu").distinct("mu").order_by("-mu")
+        mu = all_mu_steps[int(mu_step)]["mu"]
+    except IndexError:
+        mu = 0
+
+    meta_datas = model.filter(t_expl=t_expl).filter(mu__range=(mu-0.01, mu+0.01)).order_by("-phi")
+    data = []
+    index = 0
+    for m in meta_datas:
+        data.append({
+            "time_step": int(time_step),
+            "mu_step": int(index),
+            "phi_step": int(phi_step),
+            "flux_data": [],
+        })
+        qset = Fluxvals.objects.filter(spec_id=m.spec_id).order_by("wavelength")
+        for rec in qset:
+            data[index]['flux_data'].append({
+                "x": rec.wavelength,  # Graph's X-Axis
+                "y": rec.luminosity,  # Graph's Y-Axis
+            })
+        index += 1
+    return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 def fitter(request):
     if request.method == "POST":
@@ -320,7 +355,7 @@ def run_all_data(request, x2, y2, y2var):
     return response
 
 
-def plot_img(request, model_id, time_step=0, mu_step=0):
+def plot_img(request, model_id, time_step=0, mu_step=0, phi_step=0):
     model = Spectra.objects.filter(model_id=model_id)
     if model.count() <= 0:
         raise Http404
@@ -328,10 +363,18 @@ def plot_img(request, model_id, time_step=0, mu_step=0):
     try:
         all_time_steps = model.values("t_expl").distinct("t_expl").order_by("t_expl")
         t_expl = all_time_steps[int(time_step)]["t_expl"]
-        all_mu_steps = model.filter(t_expl=t_expl).values("mu").order_by("-mu")
+    except IndexError:
+        return HttpResponse(simplejson.dumps({"success": False, "error": "time_step index out of bounds", "max_time_steps": all_time_steps.count()}), content_type="application/json")
+    try:
+        all_mu_steps = model.values("mu").distinct("mu").order_by("-mu")
         mu = all_mu_steps[int(mu_step)]["mu"]
     except IndexError:
-        raise Http404
+        mu = 0
+    try:
+        all_phi_steps = model.values("phi").distinct("phi").order_by("-phi")
+        phi = all_phi_steps[int(phi_step)]["phi"]
+    except IndexError:
+        phi = 0
 
     # Gets the meta data based on the calculated mu and t_expl
     # Uses range to prevent floating point errors
