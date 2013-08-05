@@ -251,11 +251,11 @@ function refresh() {
 }
 
 function restoreScale(){
-    zoom.x(x.domain(d3.extent(frameData[currTime][currMu], function (d) {
+    zoom.x(x.domain(d3.extent(frameData[currTime][currMu][currPhi], function (d) {
         return d.x;
     }))
     .range([0, width]))
-    .y(y.domain(d3.extent(frameData[currTime][currMu], function (d) {
+    .y(y.domain(d3.extent(frameData[currTime][currMu][currPhi], function (d) {
         return d.y;
     }))
     .range([height, 0]));
@@ -264,7 +264,7 @@ function restoreScale(){
 
 function showCircles(){
     var circles = circlesLayer.selectAll("circle")
-    .data(frameData[currTime][currMu]);
+    .data(frameData[currTime][currMu][currPhi]);
 
     circles.enter()
     .append("circle")
@@ -319,7 +319,7 @@ function preloadData(method, step, step2){
                     frameData[d.time_step] = [];
                 }
                 if(frameData[d.time_step][d.mu_step] == undefined){
-                    frameData[d.time_step][d.mu_step] = d.flux_data;
+                    frameData[d.time_step][d.mu_step] = [];
                 }
                 if(frameData[d.time_step][d.mu_step][d.phi_step] == undefined){
                     frameData[d.time_step][d.mu_step][d.phi_step] = d.flux_data;
