@@ -213,7 +213,7 @@ def batch_time_data(request, model_id, mu_step):
         all_mu_steps = model.values("mu").distinct("mu").order_by("-mu")
         mu = all_mu_steps[int(mu_step)]["mu"]
     except IndexError:
-        return HttpResponse(simplejson.dumps({"success": False, "error": "mu_step index out of bounds", "max_mu_steps": all_mu_steps.count()}), content_type="application/json")
+        mu = 0
 
     meta_datas = model.filter(mu__range=(mu-0.01, mu+0.01)).order_by("t_expl")
     data = []

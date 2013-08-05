@@ -66,6 +66,9 @@
         #opOptions{
             display:none;
         }
+        .hiddenOptions{
+            display:none;
+        }
     </style>
     <script type="text/javascript">
     $(document).ready(function(){
@@ -99,11 +102,14 @@
             max: {{time_max}},
             slide: function( event, ui ){
                 getData(ui.value, currMu);
+                console.log(ui.value);
+                $("#timeStep").val(ui.value);
                 $("#time").val({{time_vals}}[ui.value]);
                 $("#tslider-step").val(ui.value);
             },
             change: function(event, ui){
                 getData(ui.value, currMu);
+                $("#timeStep").val(ui.value);
                 $("#time").val({{time_vals}}[ui.value]);
                 $("#tslider-step").val(ui.value);
                 $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#time").val() + "/" + $("#angleVal").val() + "/img/?download=1");
@@ -115,11 +121,14 @@
             max: {{mu_max}},
             slide: function( event, ui ){
                 getData(currTime, ui.value);
+                angleVal = ui.value;
+                $("muStep").val(angleVal);
                 $("#angleVal").val({{mu_vals}}[ui.value]);
                 $("#mslider-step").val(ui.value);
             },
             change: function(event, ui){
                 getData(currTime, ui.value);
+                $("muStep").val(angleVal);
                 $("#angleVal").val({{mu_vals}}[ui.value]);
                 $("#mslider-step").val(ui.value);
                 $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#time").val() + "/" + $("#angleVal").val() + "/img/?download=1");
@@ -182,7 +191,7 @@
                         <input type="text" id="time" value="0"/>
                         <button class="btn" href="#" onclick="moveFrame(1, 0)"><i class="icon-chevron-right"></i></button>
                         <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
-                        <button class="btn" onclick = "preloadData('time',$('#mslider-step').val())">Get All Time For Current Angle</button>
+                        <button class="btn" onclick = "preloadData('time',$('#muStep').val())">Get All Time For Current Angle</button>
                     </div>
                     <p>Time:</p>
                     <div id="time-slider"></div>
@@ -193,7 +202,7 @@
                             <input type="text" id="angleVal" value="0"/>
                             <button class="btn" href="#" onclick="moveFrame(0, 1)"><i class="icon-chevron-right"></i></button>
                             <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
-                            <button class="btn" onclick = "preloadData('mu',$('#tslider-step').val())">Get All Angles For Current Time</button>
+                            <button class="btn" onclick = "preloadData('mu',$('#timeStep').val())">Get All Angles For Current Time</button>
                         </div>
                         <p>Angle:</p>
                         <div id="mu-slider"></div>
@@ -210,6 +219,9 @@
                         <p>Angle:</p>
                         <div id="phi-slider"></div>
                     {% endif %}
+                    <input class = "hiddenOptions" id = "timeStep" value = "0"/>
+                    <input class = "hiddenOptions" id = "muStep" value = "0"/>
+                    <input class = "hiddenOptions" id = "phiStep" value = "0"/>
                 </div>
             </div>
             <div id="details">
