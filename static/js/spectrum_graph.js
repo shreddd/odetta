@@ -115,53 +115,6 @@ var yAxis = d3.svg.axis()
     return d.toExponential(1);
 });
 
-// var legend = [
-//     {
-//         width:145,
-//         height:17,
-//         x:width - 175,
-//         y: 25,
-//         name: 'Overplot Options', 
-//         options:[
-//             {x:10, y:10, height:15, width:15, fill: "green", stroke:"black"},
-//             {x:10, y:40, height:15, width:15, fill: "steelblue", stroke:"black"}
-//         ]
-//     }
-// ];
-//This  does not work
-// gOptions.selectAll('rect.options')
-//     .data(function(d){return d.options;})
-//     .enter()
-//     .append('rect')
-//     .classed('checkboxes',true)
-//         .attr('x', function(d){return d.x;})
-//         .attr('y',function(d){return d.y;})
-//         .attr('width',function(d){return d.width;})
-//         .attr('height',function(d){return d.height;})
-//         .attr('fill',function(d){return d.fill;})
-//         .attr('stroke',function(d){return d.stroke;})
-//         .on('click', function(d) {
-//             if(d.fill == "green"){
-//                 hideShow("overplot");
-//             } else{
-//                 hideShow("line");
-//             }
-//         });
-// var gOptions = svg.selectAll('g.legend')
-//     .data(legend)
-//     .enter()
-//     .append('g')
-//     .classed('legend',true);
-
-// gOptions.append('rect')
-//     .classed('legend',true)
-//     .attr('width',function(d){return d.width})
-//     .attr('height',function(d){return d.height})
-//     .attr('x',function(d){return d.x})
-//     .attr('y',function(d){return d.y})
-//     .attr('fill',"lightgray")
-//     .attr('stroke','black');
-
 svg.append("g")
 .attr("class", "y axis")
 .call(yAxis);
@@ -400,6 +353,7 @@ function getData(time, mu){
                 if(error){
                     console.log(error);
                 }
+                console.log(data);
                 console.log(data.error);
                 if(animation){
                     animation = clearInterval(animation);

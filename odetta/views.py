@@ -175,7 +175,8 @@ def get_plot_data(request, model_id, time_step=0, mu_step=0):
         all_mu_steps = spectra.filter(t_expl=t_expl).values("mu").order_by("-mu")
         mu = all_mu_steps[int(mu_step)]["mu"]
     except IndexError:
-        return HttpResponse(simplejson.dumps({"success": False, "error": "mu_step index out of bounds", "max_mu_steps": all_mu_steps.count()}), content_type="application/json")
+        # return HttpResponse(simplejson.dumps({"success": False, "error": "mu_step index out of bounds", "max_mu_steps": all_mu_steps.count()}), content_type="application/json")
+        mu = 0
 
     # Gets the meta data based on the calculated mu and t_expl
     # Uses range to prevent floating point errors

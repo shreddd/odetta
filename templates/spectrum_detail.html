@@ -179,7 +179,7 @@
                     <h4>Simulation Options</h4>
                     <div class="btn-group">
                         <button class="btn" href="#" onclick="moveFrame(-1, 0)"><i class="icon-chevron-left"></i></button>
-                        <input type="text" id="time" value=""/>
+                        <input type="text" id="time" value="0"/>
                         <button class="btn" href="#" onclick="moveFrame(1, 0)"><i class="icon-chevron-right"></i></button>
                         <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
                         <button class="btn" onclick = "preloadData('time',$('#mslider-step').val())">Get All Time For Current Angle</button>
@@ -190,7 +190,7 @@
                     {% if meta_data.has_mu %}
                         <div class="btn-group">
                             <button class="btn" href="#" onclick="moveFrame(0, -1)"><i class="icon-chevron-left"></i></button>
-                            <input type="text" id="angleVal" value=""/>
+                            <input type="text" id="angleVal" value="0"/>
                             <button class="btn" href="#" onclick="moveFrame(0, 1)"><i class="icon-chevron-right"></i></button>
                             <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
                             <button class="btn" onclick = "preloadData('mu',$('#tslider-step').val())">Get All Angles For Current Time</button>
