@@ -371,7 +371,8 @@ function getData(time, mu, phi){
                 }
             }else{
                 frameData[data.time_step] = [];
-                frameData[data.time_step][data.mu_step] = data.flux_data;
+                frameData[data.time_step][data.mu_step] = [];
+                frameData[data.time_step][data.mu_step][data.phi_step] = data.flux_data;
                 graphData(data.flux_data);
                 currTime = parseInt(data.time_step);
                 currMu = parseInt(data.mu_step);

@@ -158,6 +158,9 @@
         $("#muVal").change(function(){
             $("#mu-slider").slider("option", "value", $(this).val().replace(/[a-zA-Z]/g, ""));
         });
+        $("#phiVal").change(function(){
+            $("#phi-slider").slider("option", "value", $(this).val().replace(/[a-zA-Z]/g, ""));
+        });
     });
     </script>
 {% endblock head %}
