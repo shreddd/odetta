@@ -72,10 +72,9 @@
     </style>
     <script type="text/javascript">
     $(document).ready(function(){
-        $("#time").val({{time_vals}}[0]);
-        $("#muVal").val({{mu_vals}}[0]);
-        $("#phiVal").val({{phi_vals}}[0]);
-        console.log({{time_vals}})
+        $("#time").val(parseFloat({{time_vals}}[0]).toFixed(1));
+        $("#muVal").val(parseFloat({{mu_vals}}[0]).toFixed(1));
+        $("#phiVal").val(parseFloat({{phi_vals}}[0]).toFixed(1));
         $(".tabactive").show();
         $("#grapharea a").click(function(e){
             if($(this).parent("li[class~=disabled]").length == 0){
@@ -83,6 +82,11 @@
                 $("#grapharea .active").removeClass("active");
                 $(this).parent("li").addClass("active");
                 showTab($(this).attr("href"));
+            }
+        });
+        $(".nav-list a").click(function(e){
+            if($(this).parent().attr("class") == "disabled"){
+                e.preventDefault();
             }
         });
         function showTab(id){
@@ -105,12 +109,12 @@
             slide: function( event, ui ){
                 getData(ui.value, currMu, currPhi);
                 $("#timeStep").val(ui.value);
-                $("#time").val({{time_vals}}[ui.value]);
+                $("#time").val(parseFloat({{time_vals}}[ui.value]).toFixed(1));
             },
             change: function(event, ui){
                 getData(ui.value, currMu, currPhi);
                 $("#timeStep").val(ui.value);
-                $("#time").val({{time_vals}}[ui.value]);
+                $("#time").val(parseFloat({{time_vals}}[ui.value]).toFixed(1));
                 $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#timeStep").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
             },
         });
@@ -121,12 +125,12 @@
             slide: function( event, ui ){
                 getData(currTime, ui.value, currPhi);
                 $("muStep").val(ui.value);
-                $("#muVal").val({{mu_vals}}[ui.value]);
+                $("#muVal").val(parseFloat({{mu_vals}}[ui.value]).toFixed(1));
             },
             change: function(event, ui){
                 getData(currTime, ui.value, currPhi);
                 $("muStep").val(ui.value);
-                $("#muVal").val({{mu_vals}}[ui.value]);
+                $("#muVal").val(parseFloat({{mu_vals}}[ui.value]).toFixed(1));
                 $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#timeStep").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
             },
         });
@@ -137,12 +141,12 @@
             slide: function( event, ui ){
                 getData(currTime, currMu, ui.value);
                 $("muStep").val(ui.value);
-                $("#muVal").val({{mu_vals}}[ui.value]);
+                $("#muVal").val(parseFloat({{phi_vals}}[ui.value]).toFixed(1));
             },
             change: function(event, ui){
                 getData(currTime, currMu, ui.value);
                 $("muStep").val(ui.value);
-                $("#muVal").val({{mu_vals}}[ui.value]);
+                $("#muVal").val(parseFloat({{phi_vals}}[ui.value]).toFixed(1));
                 $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#timeStep").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
             },
         });
@@ -205,21 +209,21 @@
                         <button class="btn" href="#" onclick="moveFrame(-1, 0, 0)"><i class="icon-chevron-left"></i></button>
                         <input type="text" id="time" value="0"/>
                         <button class="btn" href="#" onclick="moveFrame(1, 0, 0)"><i class="icon-chevron-right"></i></button>
-                        <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
+                        <button class="btn restore" onclick = "restoreScale()">Rescale Graph</button>
                         <button class="btn" onclick = "preloadData('time',$('#muStep').val(),$('#phiStep').val())">Get All Time For Current State</button>
                     </div>
                     <p>Time:</p>
-                    <div id="time-slider"></div>
+                    <div id="time-slider" class = "sliders"></div>
                     {% if meta_data.has_mu %}
                         <div class="btn-group">
                             <button class="btn" href="#" onclick="moveFrame(0, -1, 0)"><i class="icon-chevron-left"></i></button>
                             <input type="text" id="muVal" value="0"/>
                             <button class="btn" href="#" onclick="moveFrame(0, 1, 0)"><i class="icon-chevron-right"></i></button>
-                            <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
+                            <button class="btn restore" onclick = "restoreScale()">Rescale Graph</button>
                             <button class="btn" onclick = "preloadData('mu',$('#timeStep').val(),$('#phiStep').val())">Get All Mu For Current State</button>
                         </div>
                         <p>Mu:</p>
-                        <div id="mu-slider"></div>
+                        <div id="mu-slider" class = "sliders"></div>
                     {% endif %}
                     {% if meta_data.has_phi %}
                         <div class="btn-group">
@@ -230,7 +234,7 @@
                             <button class="btn" onclick = "preloadData('phi',$('#time').val(), $('muStep').val())">Get All Phi For Current State</button>
                         </div>
                         <p>Angle:</p>
-                        <div id="phi-slider"></div>
+                        <div id="phi-slider" class = "sliders"></div>
                     {% endif %}
                     <input class = "hiddenOptions" id = "timeStep" value = "0"/>
                     <input class = "hiddenOptions" id = "muStep" value = "0"/>
