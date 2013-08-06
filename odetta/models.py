@@ -112,13 +112,13 @@ def get_phi_max(model_id):
 
 def get_time_val(model_id):
     times = []
-    for time in Spectra.objects.filter(model_id = 1).values("t_expl").distinct("t_expl").order_by("t_expl"):
+    for time in Spectra.objects.filter(model_id = model_id).values("t_expl").distinct("t_expl").order_by("t_expl"):
         times.append(time["t_expl"]) 
     return times
 
 def get_mu_val(model_id):
     mu_steps = []
-    for mu in Spectra.objects.filter(model_id = 1).values("mu").distinct("mu").order_by("mu"):
+    for mu in Spectra.objects.filter(model_id = model_id).values("mu").distinct("mu").order_by("mu"):
         mu_steps.append(mu["mu"]) 
     return mu_steps
 
