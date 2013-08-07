@@ -320,16 +320,23 @@ def batch_phi_data(request, model_id, time_step, mu_step):
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 def fitter(request):
+    import random
     if request.method == "POST":
         uploaded_file = request.FILES.get("file")
         search_option = request.POST.get("fitType")
         flux_data = oplot_process(file=None, model_id=39)
+        matched_models = []
         data = {
             "flux_data": flux_data,
         }
+        for x in range(10):
+            rand = int(random.random() * 40 + 1)
+            metatype = Spectra.objects.filter(model_id = rand).distinct("model_id")[0].metatype[:4].title() + Spectra.objects.filter(model_id = rand).distinct("model_id")[0].metatype[5:-1].title() + Spectra.objects.filter(model_id = rand).distinct("model_id")[0].metatype[-1:].upper()
+            meta_data = eval(metatype).objects.filter(model_id = rand)[0]
+            matched_models.append(meta_data)
         # fit(uploaded_file,search_option)
         # going to need an array of 10 models, so I can get model_ids in the template
-        return render_to_response("fitter_results.html", {"data":flux_data}, context_instance=RequestContext(request))
+        return render_to_response("fitter_results.html", {"data":flux_data, "matched_models":matched_models}, context_instance=RequestContext(request))
     return render_to_response("fitter_form.html", context_instance=RequestContext(request))
 
 
@@ -405,7 +412,7 @@ def plot_img(request, model_id, time_step=0, mu_step=0, phi_step=0):
     response = HttpResponse(content_type='image/png')
     if int(request.GET.get("download", 0)) == 1:
         response['Content-Disposition'] = 'attachment; filename="graph.png"'
-    canvas.print_png(response)
+    canvas.print_png(vresponse)
     return response
 
 
