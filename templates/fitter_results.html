@@ -1,5 +1,62 @@
 {% extends "base.html" %}
 
+{%block head%}
+    <script type="text/javascript" src="/static/js/d3.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/graph.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <style type="text/css">
+        #slides{
+            width:30px;
+            margin:0;
+            text-align: center;
+        }
+    </style>
+    <script type="text/javascript">
+        var m_id_array = [];
+        var m_id;
+        var currSlide = 0;
+        $(document).ready(function(){
+            for(var x = 0; x < 10; x++){
+                m_id_array.push(Math.floor(Math.random() * 40) + 1);
+            }
+            m_id = m_id_array[0];
+        });
+        $(function(){
+            $( "#matches-slider" ).slider({
+                value: 0,
+                min: 0,
+                max: 10,
+                slide: function( event, ui ){
+                    m_id = m_id_array[ui.value];
+                    getPlot(0,0,0);
+                    $("#slides").val(ui.value);
+                },
+                change: function(event, ui){
+                    m_id = m_id_array[ui.value];
+                    getPlot(0,0,0);
+                    $("#slides").val(ui.value);
+                },
+            });
+            $("#slides").change(function(){
+                $("#matches-slider").slider("option", "value", $(this).val().replace(/[a-zA-Z]/g, ""));
+                
+            });
+        });
+        function moveSlide(slide){
+            currSlide+=parseInt(slide);
+            if(currSlide < 0){
+                currSlide = 0;
+            }
+            $("#matches-slider").slider("option", "value", currSlide);
+            $("#slides").val(currSlide);
+        }
+        $("#slides").change(function(){
+            $("#matches-slider").slider("option", "value", $(this).val().replace(/[a-zA-Z]/g, ""));
+            
+        });
+    </script>
+{%endblock%}
 {% block content %}
 <div class = "span2">
     <div class="well sidebar-nav">
@@ -11,7 +68,19 @@
     </div>
 </div>
 <div class = "span10">
-    <h1>Fitted Graphs</h1>
+    <div class="graph" id="graph" oncontextmenu="return false">
+        <h2>Fitted Graphs</h2>
+    </div>
     <script type="text/javascript" src="/static/js/spectrum_graph.js"></script>
+    <div id = "graphOptions">
+        <div class="btn-group">
+            <button class="btn" href="#" onclick="moveSlide(-1)"><i class="icon-chevron-left"></i></button>
+            <input type="text" id="slides" value="0"/>
+            <button class="btn" href="#" onclick="moveSlide(1)"><i class="icon-chevron-right"></i></button>
+            <button class="btn restore" onclick = "restoreScale()">Rescale Graph</button>
+        </div>
+        <p>Different Matches:</p>
+        <div id="matches-slider" class = "sliders"></div>
+    </div>
 </div>
 {% endblock %}

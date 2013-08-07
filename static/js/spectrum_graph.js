@@ -388,6 +388,33 @@ function getData(time, mu, phi){
         });
     }
 }
+
+function getPlot(time,mu,phi){
+    d3.json("/ajax/plot/"+m_id+"/"+time+"/"+mu+"/"+phi+"/", function(error, data){
+        if (error || data.success == false){
+            if(error){
+                console.log(error);
+            }
+            console.log(data);
+            console.log(data.error);
+            if(animation){
+                animation = clearInterval(animation);
+            }
+        }else{
+            frameData[data.time_step] = [];
+            frameData[data.time_step][data.mu_step] = [];
+            frameData[data.time_step][data.mu_step][data.phi_step] = data.flux_data;
+            graphData(data.flux_data);
+            currTime = parseInt(data.time_step);
+            currMu = parseInt(data.mu_step);
+            currPhi = parseInt(data.phi_step);
+            if(rescale){
+                restoreScale();
+            }
+        }
+    });
+}
+
 function resetMouseListeners(){
     d3.selectAll("circle").on("mouseover",null);
     d3.selectAll("circle").on("mouseout",null);

@@ -325,6 +325,10 @@ def fitter(request):
         search_option = request.POST.get("fitType")
         # fit(uploaded_file,search_option)
         return render_to_response("fitter_results.html", context_instance=RequestContext(request))
+    flux_data = oplot_process(file=None, model_id=39)
+    data = {
+        "flux_data": flux_data,
+    }
     return render_to_response("fitter_form.html", context_instance=RequestContext(request))
 
 

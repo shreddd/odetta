@@ -12,12 +12,14 @@
 		padding:1em 2em;
 	}
 	</style>
+	<script type="text/javascript">
+	</script>
 {% endblock head %}
 
 {% block content %}
 	<div class="span10 offset1">
 		<h1>Spectrum Fitter</h1>
-		<form action"{% url 'odetta.views.fitter' %}" method="post" enctype="multipart/form-data">
+		<form action="{% url 'odetta.views.fitter' %}" method="post" enctype="multipart/form-data" id = "fitterform">
 			{% csrf_token %}
 			<div class="form-container">
 				<label for="file_upload">
