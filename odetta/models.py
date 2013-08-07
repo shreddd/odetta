@@ -100,6 +100,36 @@ class MetaNsm1D(models.Model):
     class Meta:
         db_table = 'meta_nsm1d'
 
+class LightCurves(models.Model):
+    model_id = models.IntegerField()
+    lc_id = models.IntegerField(primary_key=True)
+    theta = models.FloatField(null=True, blank=True)
+    phi = models.FloatField(null=True, blank=True)
+    b_lan_max = models.FloatField(null=True, blank=True)
+    r_lan_max = models.FloatField(null=True, blank=True)
+    i_lan_max = models.FloatField(null=True, blank=True)
+    ux_lan_max = models.FloatField(null=True, blank=True)
+    v_lan_max = models.FloatField(null=True, blank=True)
+    t_b_lan_max = models.FloatField(null=True, blank=True)
+    t_r_lan_max = models.FloatField(null=True, blank=True)
+    t_i_lan_max = models.FloatField(null=True, blank=True)
+    t_ux_lan_max = models.FloatField(null=True, blank=True)
+    t_v_lan_max = models.FloatField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'lightcurves'
+
+class LCVals(models.Model):
+    lc_id = models.IntegerField(primary_key=True)
+    t_expl = models.IntegerField()
+    b_landolt = models.FloatField(null=True, blank=True)
+    r_landolt = models.FloatField(null=True, blank=True)
+    i_landolt = models.FloatField(null=True, blank=True)
+    ux_landolt = models.FloatField(null=True, blank=True)
+    v_landolt = models.FloatField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'lcvals'
 
 def get_time_max(model_id):
     return Spectra.objects.filter(model_id=model_id).values("t_expl").distinct("t_expl").order_by("t_expl").count() - 1
