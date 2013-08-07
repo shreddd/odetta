@@ -60,6 +60,13 @@
             }
         }, 40);
     }
+    function validateSearchChars(str){
+            var regex = /[^a-zA-Z\_\-\)\(\s\!\@\#\$\%\^\&\*\:\;\'\"\/\\\[\]\{\}\|\=\+]/g;
+            if(str.length == 0 || str.search(regex) != -1){
+                return false;
+            }
+            return true;
+        }
     </script>
     {% block head %}
         
@@ -72,7 +79,7 @@
                 <a class="brand" href="#">Odetta</a>
                 <ul class="nav">
                     <li><a href="/">Home</a></li>
-                    <li><a href="/browse">Browse Spectra</a></li>
+                    <li><a href="/browse/">Browse Spectra</a></li>
                     <li><a href="/search/">Search Spectra</a></li>
                     <li><a href="/fitter/">Fitter</a></li>
                     <li><a href="/about/">About Us</a></li>

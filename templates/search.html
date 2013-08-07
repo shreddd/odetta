@@ -16,13 +16,35 @@
 			font-size: 0.8em;
 			font-variant: small-caps;
 		}
+		#errormsg{
+			display:none;
+		}
+		#errormsg p{
+			color:red;
+			font-size: 16px;
+			text-align: center;
+		}
 	</style>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		$("#search-form").submit(function(e){
+			e.preventDefault();
+			console.log("hi");
+			if(validateSearchChars($("#minmass").val()) || validateSearchChars($("#maxmass").val()) || validateSearchChars($("#peaklum").val())){
+				$("#errormsg").css("display","block");
+				return false;
+			} else{
+				return true;
+			}
+		});
+	});
+	</script>
 {% endblock head %}
 
 {% block content %}
 <div class = "span10 offset3">
 	<h1>Spectra Search</h1>
-	<form action="/search/" method="get" class="form-horizontal">
+	<form action="/search/" method="get" class="form-horizontal" id = "search-form">
 			<div class="control-group">
 				<p>
 					<label class="control-label" for="id_minmass">Minimum Mass: </label>
@@ -35,6 +57,11 @@
 				<p>
 					<label class="control-label" for="id_maxlum">Peak Luminosity: </label>
 					<input class="fields" id="peaklum" name = "peaklum">
+				</p>
+			</div>
+			<div id = "errormsg">
+				<p>
+					Error : Not a number
 				</p>
 			</div>
 			<div class="control-group">
