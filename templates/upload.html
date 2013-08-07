@@ -19,6 +19,7 @@
                 $("uploadform").append("<div id = 'loadingscreen'><img src = '/static/img/loader.gif'/></div>");
             },
             success: function(response){
+                console.log(response.flux_data);
                 $(".closedialog").click();
                 graphOverplot(response.flux_data);
                 $("#opOptions").css("display","block");

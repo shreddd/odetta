@@ -323,12 +323,13 @@ def fitter(request):
     if request.method == "POST":
         uploaded_file = request.FILES.get("file")
         search_option = request.POST.get("fitType")
+        flux_data = oplot_process(file=None, model_id=39)
+        data = {
+            "flux_data": flux_data,
+        }
         # fit(uploaded_file,search_option)
-        return render_to_response("fitter_results.html", context_instance=RequestContext(request))
-    flux_data = oplot_process(file=None, model_id=39)
-    data = {
-        "flux_data": flux_data,
-    }
+        # going to need an array of 10 models, so I can get model_ids in the template
+        return render_to_response("fitter_results.html", {"data":flux_data}, context_instance=RequestContext(request))
     return render_to_response("fitter_form.html", context_instance=RequestContext(request))
 
 
