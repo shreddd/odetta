@@ -17,7 +17,7 @@
         var m_id;
         var currSlide = 0;
         $(document).ready(function(){
-            console.log({{data}});
+            graphOverplot({{data|safe}});
             for(var x = 0; x < 10; x++){
                 m_id_array.push(Math.floor(Math.random() * 40) + 1);
             }
@@ -27,7 +27,7 @@
             $( "#matches-slider" ).slider({
                 value: 0,
                 min: 0,
-                max: 10,
+                max: 9,
                 slide: function( event, ui ){
                     m_id = m_id_array[ui.value];
                     getPlot(0,0,0);
@@ -48,6 +48,9 @@
             currSlide+=parseInt(slide);
             if(currSlide < 0){
                 currSlide = 0;
+            }
+            else if(currSlide > 9){
+                currSlide = 9;
             }
             $("#matches-slider").slider("option", "value", currSlide);
             $("#slides").val(currSlide);
