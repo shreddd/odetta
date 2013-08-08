@@ -122,12 +122,12 @@
             max: {{mu_max}},
             slide: function( event, ui ){
                 getData(currTime, ui.value, currPhi);
-                $("muStep").val(ui.value);
+                $("#muStep").val(ui.value);
                 $("#muVal").val(parseFloat({{mu_vals}}[ui.value]).toFixed(1));
             },
             change: function(event, ui){
                 getData(currTime, ui.value, currPhi);
-                $("muStep").val(ui.value);
+                $("#muStep").val(ui.value);
                 $("#muVal").val(parseFloat({{mu_vals}}[ui.value]).toFixed(1));
                 $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#timeStep").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
             },
@@ -138,12 +138,12 @@
             max: {{phi_max}},
             slide: function( event, ui ){
                 getData(currTime, currMu, ui.value);
-                $("muStep").val(ui.value);
+                $("#muStep").val(ui.value);
                 $("#muVal").val(parseFloat({{phi_vals}}[ui.value]).toFixed(1));
             },
             change: function(event, ui){
                 getData(currTime, currMu, ui.value);
-                $("muStep").val(ui.value);
+                $("#muStep").val(ui.value);
                 $("#muVal").val(parseFloat({{phi_vals}}[ui.value]).toFixed(1));
                 $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#timeStep").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
             },
@@ -229,7 +229,7 @@
                             <input type="text" id="phiVal" value="0"/>
                             <button class="btn" href="#" onclick="moveFrame(0, 0, 1)"><i class="icon-chevron-right"></i></button>
                             <button id = "restore" class="btn" onclick = "restoreScale()">Rescale Graph</button>
-                            <button class="btn" onclick = "preloadData('phi',$('#time').val(), $('muStep').val())">Get All Phi For Current State</button>
+                            <button class="btn" onclick = "preloadData('phi',$('#time').val(), $('#muStep').val())">Get All Phi For Current State</button>
                         </div>
                         <p>Angle:</p>
                         <div id="phi-slider" class = "sliders"></div>
