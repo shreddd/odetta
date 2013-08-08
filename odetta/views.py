@@ -412,7 +412,7 @@ def plot_img(request, model_id, time_step=0, mu_step=0, phi_step=0):
     response = HttpResponse(content_type='image/png')
     if int(request.GET.get("download", 0)) == 1:
         response['Content-Disposition'] = 'attachment; filename="graph.png"'
-    canvas.print_png(vresponse)
+    canvas.print_png(response)
     return response
 
 
