@@ -19,7 +19,7 @@
 		#errormsg{
 			display:none;
 		}
-		#errormsg p{
+		#errormsg p, #searcherrormsg p{
 			color:red;
 			font-size: 16px;
 			text-align: center;
@@ -46,6 +46,9 @@
 <div class = "span10 offset3">
 	<h1>Spectra Search</h1>
 	<form action="/search/" method="get" class="form-horizontal" id = "search-form">
+			<p>
+				For the fastest search, please enter in the most amount of fields possible. 
+			</p>
 			<div class="control-group">
 				<p>
 					<label class="control-label" for="id_minmass">Minimum Mass: </label>
@@ -57,12 +60,21 @@
 				</p>
 				<p>
 					<label class="control-label" for="id_maxlum">Peak Luminosity: </label>
-					<input class="fields" id="peaklum" name = "peaklum">
+					<input class="fields" id="peaklum" name = "peaklum" placeholder = "Leave blank for 0">
+				</p>
+				<p>
+					<label class = "control-label" for="id_modeltype">Model Type: </label>
+					<input class = "fields" id = "modeltype" name = "modeltype" placeholder = "Ex: Delayed detonation">
 				</p>
 			</div>
 			<div id = "errormsg">
 				<p>
-					Error : Not a number
+					Incorrect Fields
+				</p>
+			</div>
+			<div id = "searcherrormsg">
+				<p>
+					{{error}}
 				</p>
 			</div>
 			<div class="control-group">

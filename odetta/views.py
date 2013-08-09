@@ -107,11 +107,30 @@ def search_models(request):
             maxmass = int(request.GET.get("maxmass"))
         else:
             maxmass = float("inf")
+        if request.GET.get("modeltype", False):
+            modeltype = request.GET.get("modeltype")
+        else:
+            modeltype = ""
         page = request.GET.get("page", 1)
         result_list = []
-        for model in MetaDd2D.objects.filter(mass_wd__range=(minmass,maxmass)):
-            result_list.append({"pub":Publications.objects.get(pub_id = model.pub_id),"model":model})
-        pages = Paginator(result_list, MAX_ENTRIES)
+        if modeltype:
+            metaType = "Meta"
+            temp = ""
+            for word in modeltype.split(" "):
+                temp += word[0].lower()
+            metaType += (temp.title() + str(Publications.objects.get(fullname__icontains = modeltype).modeldim) + "D")
+            metaobj = eval(metaType)
+            try:
+                object_list = metaobj.objects.filter(mass_wd__range=(minmass,maxmass))
+            except Exception:
+                return render_to_response('search.html',{"error":"Mass does not exist for that model"}, context_instance=RequestContext(request))
+            for model in metaobj.objects.filter(mass_wd__range=(minmass,maxmass)):
+                result_list.append({"pub":Publications.objects.get(pub_id = model.pub_id),"model":model})
+                pages = Paginator(result_list, MAX_ENTRIES)
+        else:
+            for model in MetaDd2D.objects.filter(mass_wd__range=(minmass,maxmass)):
+                result_list.append({"pub":Publications.objects.get(pub_id = model.pub_id),"model":model})
+                pages = Paginator(result_list, MAX_ENTRIES)
         try:
             results = pages.page(page)
         except PageNotAnInteger:
