@@ -34,12 +34,12 @@
                 slide: function( event, ui ){
                     m_id = m_id_array[ui.value];
                     getPlot(0,0,0);
-                    $("#slides").val(ui.value);
+                    $("#slides").val(ui.value + 1);
                 },
                 change: function(event, ui){
                     m_id = m_id_array[ui.value];
                     getPlot(0,0,0);
-                    $("#slides").val(ui.value);
+                    $("#slides").val(ui.value + 1);
                 },
             });
             $("#slides").change(function(){
@@ -56,7 +56,7 @@
                 currSlide = 9;
             }
             $("#matches-slider").slider("option", "value", currSlide);
-            $("#slides").val(currSlide);
+            $("#slides").val(currSlide + 1);
         }
         $("#slides").change(function(){
             $("#matches-slider").slider("option", "value", $(this).val().replace(/[a-zA-Z]/g, ""));
@@ -82,7 +82,7 @@
     <div id = "graphOptions">
         <div class="btn-group">
             <button class="btn" href="#" onclick="moveSlide(-1)"><i class="icon-chevron-left"></i></button>
-            <input type="text" id="slides" value="0"/>
+            <input type="text" id="slides" value="1"/>
             <button class="btn" href="#" onclick="moveSlide(1)"><i class="icon-chevron-right"></i></button>
             <button class="btn restore" onclick = "restoreScale()">Rescale Graph</button>
         </div>
