@@ -225,6 +225,8 @@ function graphOverplot(data){
     refresh();         
 }
 
+var circleshidden = false;
+
 function refresh() {
     svg.select(".x.axis").call(xAxis);
     svg.select(".y.axis").call(yAxis);
@@ -242,7 +244,7 @@ function refresh() {
     svg.selectAll(".overplot")
     .attr("class", "overplot")
     .attr("d", line);
-    if(zoom.scale() > 10){
+    if(zoom.scale() > 10 && !circleshidden){
         showCircles();
         resetMouseListeners();
     } else{
@@ -477,6 +479,7 @@ function hideShow(graph_name){
         $("." +graph_name + "Btn").html("Show " + graph_name);
         if(graph_name == "line" && zoom.scale() > 10){
             circlesLayer.selectAll("circle").remove();
+            circleshidden = true;
         }
         $("#legend").attr("display","none");
     }
@@ -485,6 +488,7 @@ function hideShow(graph_name){
         $("." + graph_name + "Btn").html("Hide " + graph_name);
         if(zoom.scale() > 10){
             showCircles();
+            circleshidden = false;
             resetMouseListeners();
         }
         $("#legend").attr("display","inline");

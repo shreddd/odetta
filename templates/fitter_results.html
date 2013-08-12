@@ -14,6 +14,16 @@
         #currentmid{
             display:none;
         }
+        #graphOptions{
+            margin-bottom: 50px;
+        }
+        #matches-slider{
+            height: 10px;
+            margin: 10px 10px;
+        }
+        #opOptions{
+            margin-bottom:10px;
+        }
     </style>
     <script type="text/javascript">
         var m_id_array = [];
@@ -80,6 +90,13 @@
     </div>
     <script type="text/javascript" src="/static/js/spectrum_graph.js"></script>
     <div id = "graphOptions">
+        <div id = "opOptions">
+            <h4>Overplot Options</h4>
+            <div class = "btn-group">
+                <button class = "btn lineBtn" onclick = "hideShow('line')">Hide Line</button>
+                <button class = "btn overplotBtn" onclick = "hideShow('overplot')">Hide Overplotted</button>
+            </div>
+        </div>
         <div class="btn-group">
             <button class="btn" href="#" onclick="moveSlide(-1)"><i class="icon-chevron-left"></i></button>
             <input type="text" id="slides" value="1"/>

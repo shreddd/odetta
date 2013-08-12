@@ -125,6 +125,7 @@ def search_models(request):
                     metaType += str(Publications.objects.get(metatype__icontains = modeltype).metatype[5:-1].title() + "D") 
                 except Exception:
                     return render_to_response('search.html',{"error":"Invalid Model Type"},context_instance=RequestContext(request))
+
             metaobj = eval(metaType)
             try:
                 object_list = metaobj.objects.filter(mass_wd__range=(minmass,maxmass))
