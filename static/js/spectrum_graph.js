@@ -216,13 +216,13 @@ function graphData(data){
 
 function graphOverplot(data){
     if(clearData){
-        chartBody.selectAll(".overplot").remove();         
+        chartBody.selectAll(".overplot").remove();
     }
     chartBody.append("svg:path")
     .datum(data)
     .attr("class", "overplot")
-    .attr("d", line);   
-    refresh();         
+    .attr("d", line);
+    refresh();
 }
 
 var circleshidden = false;

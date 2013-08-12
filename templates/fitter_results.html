@@ -50,6 +50,7 @@
                     m_id = m_id_array[ui.value];
                     getPlot(0,0,0);
                     $("#slides").val(ui.value + 1);
+                    $("#image_download").attr("href","/plot/"+ m_id + "/0/0/0/img/?download=1");
                 },
             });
             $("#slides").change(function(){
