@@ -205,13 +205,13 @@ legendBox.append("text")
 
 function graphData(data){
     if(clearData){
-        chartBody.selectAll(".line").remove();         
+        chartBody.selectAll(".line").remove();
     }
     chartBody.append("svg:path")
     .datum(data)
     .attr("class", "line")
-    .attr("d", line);   
-    refresh();         
+    .attr("d", line);
+    refresh();   
 }
 
 function graphOverplot(data){
