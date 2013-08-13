@@ -12,7 +12,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files import File
-from odetta.settings import FITS_ROOT
+from odetta.settings import FITS_ROOT, TEMPPASSWORD
 import zipfile
 import glob,os
 import StringIO
@@ -31,24 +31,27 @@ def browse(request, pub_id=None):
     breadcrumbs = [{"name": "Publications", "url": reverse("odetta.views.browse")}]
 
     if pub_id:
-        breadcrumbs.append({
-            "name": Publications.objects.get(pub_id=pub_id).shortname,
-            "url": reverse("odetta.views.browse", kwargs={"pub_id": pub_id}),
-            "active": True,
-        })
-        metatype = Publications.objects.get(pub_id=pub_id).metatype[:4].title() + Publications.objects.get(pub_id=pub_id).metatype[5:-1].title() + Publications.objects.get(pub_id=pub_id).metatype[-1:].upper()
-        data = eval(metatype).objects.filter(pub_id=pub_id).order_by("model_id")
-        for model in data:
-            details = ""
-            for field_name in model._meta.get_all_field_names():
-                field = model._meta.get_field(field_name)
-                if field_name not in ['modelname', 'model_id', 'pub_id']:
-                    details += "%s: %s; " % (field.verbose_name, model.__dict__[field_name])
-            listing.append({
-                "name": model.modelname,
-                "url": reverse("odetta.views.plot", kwargs={"model_id": model.model_id}),
-                "details": details
+        if Publications.objects.get(pub_id = pub_id).is_public:
+            breadcrumbs.append({
+                "name": Publications.objects.get(pub_id=pub_id).shortname,
+                "url": reverse("odetta.views.browse", kwargs={"pub_id": pub_id}),
+                "active": True,
             })
+            metatype = Publications.objects.get(pub_id=pub_id).metatype[:4].title() + Publications.objects.get(pub_id=pub_id).metatype[5:-1].title() + Publications.objects.get(pub_id=pub_id).metatype[-1:].upper()
+            data = eval(metatype).objects.filter(pub_id=pub_id).order_by("model_id")
+            for model in data:
+                details = ""
+                for field_name in model._meta.get_all_field_names():
+                    field = model._meta.get_field(field_name)
+                    if field_name not in ['modelname', 'model_id', 'pub_id']:
+                        details += "%s: %s; " % (field.verbose_name, model.__dict__[field_name])
+                listing.append({
+                    "name": model.modelname,
+                    "url": reverse("odetta.views.plot", kwargs={"model_id": model.model_id}),
+                    "details": details
+                })
+        else: 
+            return redirect("odetta.views.validate", pub_id = pub_id)
     else:
         breadcrumbs = [{"name": "Publications", "url": reverse("odetta.views.browse"), "active": True}]
         data = Publications.objects.all().order_by("fullname")        
@@ -487,5 +490,14 @@ def ajax_overplot(request, model_id):
         "flux_data": flux_data,
     }
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
+
+def validate(request, pub_id):
+    pubid = pub_id
+    if request.method == "POST":
+        if request.POST.get("password") == TEMPPASSWORD:
+            return redirect('odetta.views.browse', pub_id = pubid)
+        else:
+            return render_to_response("validate.html", {"pub_id":pubid, "error":"Incorrect password"}, context_instance=RequestContext(request))
+    return render_to_response("validate.html", {"pub_id":pubid}, context_instance=RequestContext(request))
 
 
