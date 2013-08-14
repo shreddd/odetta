@@ -29,29 +29,27 @@ def home_page(request):
 def browse(request, pub_id=None):
     listing = []
     breadcrumbs = [{"name": "Publications", "url": reverse("odetta.views.browse")}]
-
     if pub_id:
-        if Publications.objects.get(pub_id = pub_id).is_public:
-            breadcrumbs.append({
-                "name": Publications.objects.get(pub_id=pub_id).shortname,
-                "url": reverse("odetta.views.browse", kwargs={"pub_id": pub_id}),
-                "active": True,
+        validated = Publications.objects.get(pub_id = pub_id).is_public
+        breadcrumbs.append({
+            "name": Publications.objects.get(pub_id=pub_id).shortname,
+            "url": reverse("odetta.views.browse", kwargs={"pub_id": pub_id}),
+            "active": True,
+        })
+        metatype = Publications.objects.get(pub_id=pub_id).metatype[:4].title() + Publications.objects.get(pub_id=pub_id).metatype[5:-1].title() + Publications.objects.get(pub_id=pub_id).metatype[-1:].upper()
+        data = eval(metatype).objects.filter(pub_id=pub_id).order_by("model_id")
+        for model in data:
+            details = ""
+            for field_name in model._meta.get_all_field_names():
+                field = model._meta.get_field(field_name)
+                if field_name not in ['modelname', 'model_id', 'pub_id']:
+                    details += "%s: %s; " % (field.verbose_name, model.__dict__[field_name])
+            listing.append({
+                "obj": model,
+                "name": model.modelname,
+                "url": reverse("odetta.views.plot", kwargs={"model_id": model.model_id}),
+                "details": details
             })
-            metatype = Publications.objects.get(pub_id=pub_id).metatype[:4].title() + Publications.objects.get(pub_id=pub_id).metatype[5:-1].title() + Publications.objects.get(pub_id=pub_id).metatype[-1:].upper()
-            data = eval(metatype).objects.filter(pub_id=pub_id).order_by("model_id")
-            for model in data:
-                details = ""
-                for field_name in model._meta.get_all_field_names():
-                    field = model._meta.get_field(field_name)
-                    if field_name not in ['modelname', 'model_id', 'pub_id']:
-                        details += "%s: %s; " % (field.verbose_name, model.__dict__[field_name])
-                listing.append({
-                    "name": model.modelname,
-                    "url": reverse("odetta.views.plot", kwargs={"model_id": model.model_id}),
-                    "details": details
-                })
-        else: 
-            return redirect("odetta.views.validate", pub_id = pub_id)
     else:
         breadcrumbs = [{"name": "Publications", "url": reverse("odetta.views.browse"), "active": True}]
         data = Publications.objects.all().order_by("fullname")        
@@ -62,6 +60,7 @@ def browse(request, pub_id=None):
                 if field_name not in ['modeltype','fullname','is_public','shortname', 'pub_id', 'url', 'summary', 'metatype']:
                     details += "%s: %s; " % (field.verbose_name, publication.__dict__[field_name])
             listing.append({
+                "obj": publication,
                 "name": publication.fullname,
                 "url": reverse("odetta.views.browse", kwargs={"pub_id": publication.pub_id}),
                 "details": details
@@ -93,8 +92,6 @@ def browse(request, pub_id=None):
         temp.pop("page")
     query_string = temp.urlencode()
 
-
-    
     return render_to_response('list_view.html', {"results": results, "q_string": query_string, "page_range": page_range, "breadcrumbs": breadcrumbs})
 
 def search_models(request):
@@ -490,14 +487,4 @@ def ajax_overplot(request, model_id):
         "flux_data": flux_data,
     }
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
-
-def validate(request, pub_id):
-    pubid = pub_id
-    if request.method == "POST":
-        if request.POST.get("password") == TEMPPASSWORD:
-            return redirect('odetta.views.browse', pub_id = pubid)
-        else:
-            return render_to_response("validate.html", {"pub_id":pubid, "error":"Incorrect password"}, context_instance=RequestContext(request))
-    return render_to_response("validate.html", {"pub_id":pubid}, context_instance=RequestContext(request))
-
 
