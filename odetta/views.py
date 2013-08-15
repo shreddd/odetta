@@ -27,16 +27,18 @@ def home_page(request):
 
 
 def browse(request, pub_id=None):
+    authenticated = True
     listing = []
     breadcrumbs = [{"name": "Publications", "url": reverse("odetta.views.browse")}]
     if pub_id:
-        validated = Publications.objects.get(pub_id = pub_id).is_public
+        pub = Publications.objects.get(pub_id=pub_id)
+        validated = pub.is_public
         breadcrumbs.append({
-            "name": Publications.objects.get(pub_id=pub_id).shortname,
+            "name": pub.shortname,
             "url": reverse("odetta.views.browse", kwargs={"pub_id": pub_id}),
             "active": True,
         })
-        metatype = Publications.objects.get(pub_id=pub_id).metatype[:4].title() + Publications.objects.get(pub_id=pub_id).metatype[5:-1].title() + Publications.objects.get(pub_id=pub_id).metatype[-1:].upper()
+        metatype = pub.metatype[:4].title() + pub.metatype[5:-1].title() + pub.metatype[-1:].upper()
         data = eval(metatype).objects.filter(pub_id=pub_id).order_by("model_id")
         for model in data:
             details = ""
@@ -51,8 +53,11 @@ def browse(request, pub_id=None):
                 "details": details
             })
     else:
+        if authenticated:
+            data = Publications.objects.all().order_by("fullname")        
+        else: 
+            data = Publications.objects.filter(is_public = True).order_by("fullname")
         breadcrumbs = [{"name": "Publications", "url": reverse("odetta.views.browse"), "active": True}]
-        data = Publications.objects.all().order_by("fullname")        
         for publication in data:
             details = ""
             for field_name in publication._meta.get_all_field_names():
