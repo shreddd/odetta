@@ -18,7 +18,7 @@
             url:$("#uploadform").attr("action"),
             type: 'POST',
             beforeSend: function(){
-                $("#uploadform").append("<div id = 'loadingscreen'><img src = '{% static 'img/loader.gif' %}'/></div>");
+                $("#uploadform").append("<div id = 'loadingscreen'><img src = '/site_media/odetta/img/loader.gif' /></div>");
             },
             success: function(response){
                 $(".closedialog").click();
