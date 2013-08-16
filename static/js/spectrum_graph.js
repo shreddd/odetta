@@ -313,7 +313,7 @@ function preloadData(method, step, step2){
     $(".graph").append("<div id='loadingscreen'><img width='32px' height='32px' src='{% static 'img/loader.gif' %}'/></div>");
     $(".btn").attr("disabled",true);
     $(".nav-list li").attr("class","disabled");
-    d3.json("/ajax/"+method+"/"+m_id+"/"+step+"/" + step2 + "/", function(error, data){
+    d3.json("/odetta/ajax/"+method+"/"+m_id+"/"+step+"/" + step2 + "/", function(error, data){
         if (error){
             console.log(error);
         }else{
