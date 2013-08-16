@@ -365,7 +365,7 @@ function getData(time, mu, phi){
             restoreScale();
         }
     }else{
-        d3.json("/ajax/plot/"+m_id+"/"+time+"/"+mu+"/"+phi+"/", function(error, data){
+        d3.json("/odetta/ajax/plot/"+m_id+"/"+time+"/"+mu+"/"+phi+"/", function(error, data){
             if (error || data.success == false){
                 if(error){
                     console.log(error);
@@ -392,7 +392,7 @@ function getData(time, mu, phi){
 }
 
 function getPlot(time,mu,phi){
-    d3.json("/ajax/plot/"+m_id+"/"+time+"/"+mu+"/"+phi+"/", function(error, data){
+    d3.json("/odetta/ajax/plot/"+m_id+"/"+time+"/"+mu+"/"+phi+"/", function(error, data){
         if (error || data.success == false){
             if(error){
                 console.log(error);
