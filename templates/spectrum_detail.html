@@ -114,7 +114,7 @@
                 getData(ui.value, currMu, currPhi);
                 $("#timeStep").val(ui.value);
                 $("#time").val(parseFloat({{time_vals}}[ui.value]).toFixed(1));
-                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#timeStep").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
+                $("#image_download").attr("href","/odetta/plot/{{meta_data.model_id}}/" + $("#timeStep").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
             },
         });
         $( "#mu-slider" ).slider({
@@ -130,7 +130,7 @@
                 getData(currTime, ui.value, currPhi);
                 $("#muStep").val(ui.value);
                 $("#muVal").val(parseFloat({{mu_vals}}[ui.value]).toFixed(1));
-                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#timeStep").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
+                $("#image_download").attr("href","/odetta/plot/{{meta_data.model_id}}/" + $("#timeStep").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
             },
         });
         $( "#phi-slider" ).slider({
@@ -146,7 +146,7 @@
                 getData(currTime, currMu, ui.value);
                 $("#muStep").val(ui.value);
                 $("#muVal").val(parseFloat({{phi_vals}}[ui.value]).toFixed(1));
-                $("#image_download").attr("href","/plot/{{meta_data.model_id}}/" + $("#timeStep").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
+                $("#image_download").attr("href","/odetta/plot/{{meta_data.model_id}}/" + $("#timeStep").val() + "/" + $("#muStep").val() + "/" + $("#phiStep").val() + "/img/?download=1");
             },
         });
         $("#time").change(function(){
