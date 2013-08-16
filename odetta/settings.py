@@ -63,11 +63,11 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/var/www/html/site_media/odetta'
+STATIC_ROOT = '/var/www/html/site_media/odetta/'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
-STATIC_URL = '/site_media/odetta'
+STATIC_URL = '/site_media/odetta/'
 
 FORCE_SCRIPT_NAME = '/odetta'
 
